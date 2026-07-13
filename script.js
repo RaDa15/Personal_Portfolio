@@ -402,14 +402,14 @@ contactForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
     // ===== reCAPTCHA Validation =====
-    // const recaptchaResponse = grecaptcha.getResponse();
-    // if (!recaptchaResponse) {
-    //     formMessage.textContent = "⚠️ Please complete the reCAPTCHA verification.";
-    //     formMessage.className = "form-message error";
-    //     formMessage.style.display = "block";
-    //     setTimeout(() => { formMessage.style.display = "none"; }, 4000);
-    //     return; // Stop form submission
-    // }
+    const recaptchaResponse = grecaptcha.getResponse();
+    if (!recaptchaResponse) {
+        formMessage.textContent = "⚠️ Please complete the reCAPTCHA verification.";
+        formMessage.className = "form-message error";
+        formMessage.style.display = "block";
+        setTimeout(() => { formMessage.style.display = "none"; }, 4000);
+        return; // Stop form submission
+    }
 
     const submitBtn = contactForm.querySelector("button");
     const btnText = submitBtn.querySelector("span");
@@ -445,7 +445,7 @@ contactForm.addEventListener("submit", function (e) {
             formMessage.style.display = "block";
 
             contactForm.reset();
-            // grecaptcha.reset(); // ✅ Reset reCAPTCHA after success
+            grecaptcha.reset(); // ✅ Reset reCAPTCHA after success
         })
         .catch((error) => {
             console.error("EmailJS Error:", error);
@@ -455,7 +455,7 @@ contactForm.addEventListener("submit", function (e) {
             formMessage.classList.add("error");
             formMessage.style.display = "block";
 
-            // grecaptcha.reset(); // ✅ Reset reCAPTCHA on error too
+            grecaptcha.reset(); // ✅ Reset reCAPTCHA on error too
         })
         .finally(() => {
             // Restore button
