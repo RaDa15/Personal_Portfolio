@@ -16,8 +16,9 @@
 
     <!-- Security Headers & Policy -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.google.com https://www.gstatic.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.cdnfonts.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com https://fonts.cdnfonts.com data:; img-src 'self' data: https:; connect-src 'self' https://api.emailjs.com https://www.google-analytics.com; frame-src 'self' https://www.google.com; object-src 'none'; base-uri 'self';">
+        content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://www.google.com https://www.gstatic.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.cdnfonts.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com https://fonts.cdnfonts.com data:; img-src 'self' data: https:; connect-src 'self' https://api.emailjs.com https://www.google-analytics.com; frame-src 'self' https://www.google.com; form-action 'self'; object-src 'none'; base-uri 'self'; upgrade-insecure-requests;">
 
     <title>Pema Choda - Portfolio</title>
 
@@ -36,22 +37,17 @@
         rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css?v=4.0">
+    <link rel="stylesheet" href="styles.css?v=4.1">
     <!-- Particles.js with SRI -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"
         integrity="sha384-d+UOwmNNIC7V4izkTAKSXzWhjC2GxiS9PTykO1XdOPC3nc2z65UOS7SP6QdKPA70"
         crossorigin="anonymous"></script>
     <!-- Google reCAPTCHA v2 -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <!-- EmailJS with SRI -->
+    <!-- EmailJS with SRI (initialized in script.js for strict CSP without 'unsafe-inline') -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
         integrity="sha384-SALc35EccAf6RzGw4iNsyj7kTPr33K7RoGzYu+7heZhT8s0GZouafRiCg1qy44AS"
         crossorigin="anonymous"></script>
-    <script>
-        (function () {
-            emailjs.init("y7EhNSxSYeCNTfytb");
-        })();
-    </script>
 
 
     <!-- Enhanced SEO Meta Tags -->
@@ -72,7 +68,7 @@
     "https://github.com/RaDa15",
     "https://www.linkedin.com/in/pema-choda-6b8527271",
     "https://x.com/TsheringDo4689",
-    "https://www.instagram.com/solitarius_lupu?igsh=NDQxYXMya2w1ZnZn"
+    "https://www.instagram.com/solitarius_lupu"
   ],
   "knowsAbout": ["Web Development", "Artificial Intelligence", "React", "Node.js", "Python"]
 }
@@ -86,23 +82,6 @@
 
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1E73AE">
-
-
-    <!-- Google Analytics (Safeguarded) -->
-    <script>
-        const GA_MEASUREMENT_ID = 'YOUR-GA-ID'; // Set your real Google Analytics ID here (e.g. 'G-XXXXXXXXXX')
-        if (GA_MEASUREMENT_ID && GA_MEASUREMENT_ID !== 'YOUR-GA-ID') {
-            const gaScript = document.createElement('script');
-            gaScript.async = true;
-            gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-            document.head.appendChild(gaScript);
-
-            window.dataLayer = window.dataLayer || [];
-            function gtag() { dataLayer.push(arguments); }
-            gtag('js', new Date());
-            gtag('config', GA_MEASUREMENT_ID);
-        }
-    </script>
 
 </head>
 
@@ -168,7 +147,7 @@
                         aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
                     <a href="https://x.com/TsheringDo4689" target="_blank" rel="noopener noreferrer"
                         aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.instagram.com/solitarius_lupu?igsh=NDQxYXMya2w1ZnZn" target="_blank"
+                    <a href="https://www.instagram.com/solitarius_lupu" target="_blank"
                         rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
@@ -540,9 +519,9 @@
             <div class="modal-body">
                 <h2 class="modal-title">Interactive Resume</h2>
                 <div class="resume-iframe-container">
-                    <iframe src="Resume/Pema_Choda_Resume.pdf" frameborder="0"></iframe>
+                    <iframe src="Resume/Pema_Choda_Resume.pdf" title="Pema Choda Resume" loading="lazy"></iframe>
                 </div>
-                <div class="modal-links" style="margin-top: 1rem; text-align: center;">
+                <div class="modal-links resume-download-links">
                     <a href="Resume/Pema_Choda_Resume.pdf" download class="btn btn-primary">
                         <i class="fas fa-download"></i> Download PDF Version
                     </a>
@@ -591,6 +570,11 @@
                 </div>
 
                 <form id="contactForm" class="contact-form fade-in">
+                    <!-- Anti-bot honeypot field (visually hidden, ignored by assistive technology) -->
+                    <div class="hp-field" aria-hidden="true">
+                        <label for="website_hp">Leave this field empty</label>
+                        <input type="text" id="website_hp" name="website_hp" tabindex="-1" autocomplete="off">
+                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <input type="text" name="name" placeholder="Your Name" maxlength="100" autocomplete="name"
@@ -637,7 +621,7 @@
                             rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
                         <a href="https://x.com/TsheringDo4689" target="_blank" rel="noopener noreferrer"
                             aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="https://www.instagram.com/solitarius_lupu?igsh=NDQxYXMya2w1ZnZn" target="_blank"
+                        <a href="https://www.instagram.com/solitarius_lupu" target="_blank"
                             rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
@@ -688,7 +672,7 @@
     </button>
 
     <!-- Custom JavaScript -->
-    <script src="script.js?v=4.0"></script>
+    <script src="script.js?v=4.1"></script>
 </body>
 
 </html>

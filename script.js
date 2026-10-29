@@ -1,4 +1,26 @@
 // ===================================
+// THIRD-PARTY SDK INITIALIZATION (CSP-SAFE, NO INLINE SCRIPTS)
+// ===================================
+
+if (typeof emailjs !== 'undefined' && typeof emailjs.init === 'function') {
+    emailjs.init({ publicKey: 'y7EhNSxSYeCNTfytb' });
+}
+
+// Google Analytics (Safeguarded with strict Measurement ID validation)
+const GA_MEASUREMENT_ID = 'YOUR-GA-ID'; // Set your real Google Analytics ID here (e.g. 'G-XXXXXXXXXX')
+if (/^G-[A-Z0-9]{6,15}$/.test(GA_MEASUREMENT_ID)) {
+    const gaScript = document.createElement('script');
+    gaScript.async = true;
+    gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_MEASUREMENT_ID)}`;
+    document.head.appendChild(gaScript);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { window.dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', GA_MEASUREMENT_ID);
+}
+
+// ===================================
 // GLOBAL VARIABLES
 // ===================================
 
@@ -302,43 +324,68 @@ const modal = document.getElementById('projectModal');
 const closeModal = document.querySelector('.close-modal');
 const viewButtons = document.querySelectorAll('.btn-view');
 
+function sanitizeHttpUrl(rawUrl) {
+    if (typeof rawUrl !== 'string' || !rawUrl.trim()) return '#';
+    try {
+        const parsed = new URL(rawUrl, window.location.origin);
+        if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+            return parsed.href;
+        }
+    } catch {
+        // Reject malformed URIs
+    }
+    return '#';
+}
+
 viewButtons.forEach(button => {
     button.addEventListener('click', (e) => {
         e.preventDefault();
-        const projectIndex = parseInt(button.getAttribute('data-project'));
+        const projectIndex = Number.parseInt(button.getAttribute('data-project') || '', 10);
         openProjectModal(projectIndex);
     });
 });
 
 function openProjectModal(index) {
+    if (!modal || !Number.isInteger(index) || index < 0 || index >= projectsData.length) {
+        return;
+    }
     const project = projectsData[index];
 
-    document.querySelector('.modal-image').src = project.image;
-    document.querySelector('.modal-title').textContent = project.title;
-    document.querySelector('.modal-description').textContent = project.description;
+    const modalImg = modal.querySelector('.modal-image');
+    const modalTitle = modal.querySelector('.modal-title');
+    const modalDesc = modal.querySelector('.modal-description');
+    if (modalImg) modalImg.src = sanitizeHttpUrl(project.image);
+    if (modalTitle) modalTitle.textContent = project.title;
+    if (modalDesc) modalDesc.textContent = project.description;
 
-    // Populate features list
-    const featuresList = document.querySelector('.features-list');
-    featuresList.innerHTML = '';
-    project.features.forEach(feature => {
-        const li = document.createElement('li');
-        li.textContent = feature;
-        featuresList.appendChild(li);
-    });
+    // Populate features list safely without innerHTML
+    const featuresList = modal.querySelector('.features-list');
+    if (featuresList) {
+        featuresList.replaceChildren();
+        project.features.forEach(feature => {
+            const li = document.createElement('li');
+            li.textContent = feature;
+            featuresList.appendChild(li);
+        });
+    }
 
-    // Populate technologies
-    const modalTech = document.querySelector('.modal-tech');
-    modalTech.innerHTML = '';
-    project.technologies.forEach(tech => {
-        const span = document.createElement('span');
-        span.className = 'tech-tag';
-        span.textContent = tech;
-        modalTech.appendChild(span);
-    });
+    // Populate technologies safely without innerHTML
+    const modalTech = modal.querySelector('.modal-tech');
+    if (modalTech) {
+        modalTech.replaceChildren();
+        project.technologies.forEach(tech => {
+            const span = document.createElement('span');
+            span.className = 'tech-tag';
+            span.textContent = tech;
+            modalTech.appendChild(span);
+        });
+    }
 
-    // Update links
-    document.querySelector('.modal-links .btn-primary').href = project.liveLink;
-    document.querySelector('.modal-links .btn-secondary').href = project.githubLink;
+    // Update links with strict HTTP/HTTPS protocol allowlisting
+    const liveBtn = modal.querySelector('.modal-links .btn-primary');
+    const repoBtn = modal.querySelector('.modal-links .btn-secondary');
+    if (liveBtn) liveBtn.href = sanitizeHttpUrl(project.liveLink);
+    if (repoBtn) repoBtn.href = sanitizeHttpUrl(project.githubLink);
 
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -404,128 +451,165 @@ document.addEventListener('keydown', (e) => {
 const contactForm = document.getElementById("contactForm");
 const formMessage = document.querySelector(".form-message");
 
-contactForm.addEventListener("submit", function (e) {
-    e.preventDefault();
+const sanitizeSingleLineInput = (value, maxLength) =>
+    String(value || "")
+        .replace(/[\r\n\x00-\x1F\x7F]+/g, " ")
+        .trim()
+        .slice(0, maxLength);
 
-    // ===== Rate-Limiting / Submission Cooldown (60 seconds) =====
-    const SUBMISSION_COOLDOWN_MS = 60000;
-    const lastSentTime = localStorage.getItem("last_contact_submitted_at");
-    const currentTime = Date.now();
-    if (lastSentTime && currentTime - parseInt(lastSentTime, 10) < SUBMISSION_COOLDOWN_MS) {
-        const remainingSec = Math.ceil((SUBMISSION_COOLDOWN_MS - (currentTime - parseInt(lastSentTime, 10))) / 1000);
-        formMessage.textContent = `⏳ Please wait ${remainingSec}s before sending another message.`;
-        formMessage.className = "form-message error";
-        formMessage.style.display = "block";
-        setTimeout(() => { formMessage.style.display = "none"; }, 4000);
-        return;
-    }
+const sanitizeMultiLineInput = (value, maxLength) =>
+    String(value || "")
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/g, "")
+        .trim()
+        .slice(0, maxLength);
 
-    // ===== Input Sanitization & Trimming =====
-    const nameVal = contactForm.name.value.trim().slice(0, 100);
-    const emailVal = contactForm.email.value.trim().slice(0, 100);
-    const subjectVal = contactForm.subject.value.trim().slice(0, 150);
-    const messageVal = contactForm.message.value.trim().slice(0, 2000);
+if (contactForm && formMessage) {
+    contactForm.addEventListener("submit", function (e) {
+        e.preventDefault();
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!nameVal || !emailVal || !subjectVal || !messageVal) {
-        formMessage.textContent = "⚠️ Please fill in all required fields.";
-        formMessage.className = "form-message error";
-        formMessage.style.display = "block";
-        setTimeout(() => { formMessage.style.display = "none"; }, 4000);
-        return;
-    }
+        // ===== Anti-Bot Honeypot Check =====
+        if (contactForm.website_hp && contactForm.website_hp.value.trim() !== "") {
+            contactForm.reset();
+            return;
+        }
 
-    if (!emailRegex.test(emailVal)) {
-        formMessage.textContent = "⚠️ Please enter a valid email address.";
-        formMessage.className = "form-message error";
-        formMessage.style.display = "block";
-        setTimeout(() => { formMessage.style.display = "none"; }, 4000);
-        return;
-    }
+        // ===== Rate-Limiting / Submission Cooldown (60 seconds) =====
+        const SUBMISSION_COOLDOWN_MS = 60000;
+        const lastSentTime = localStorage.getItem("last_contact_submitted_at");
+        const parsedLastSent = Number.parseInt(lastSentTime || "", 10);
+        const currentTime = Date.now();
+        if (
+            Number.isFinite(parsedLastSent) &&
+            currentTime >= parsedLastSent &&
+            currentTime - parsedLastSent < SUBMISSION_COOLDOWN_MS
+        ) {
+            const remainingSec = Math.ceil((SUBMISSION_COOLDOWN_MS - (currentTime - parsedLastSent)) / 1000);
+            formMessage.textContent = `⏳ Please wait ${remainingSec}s before sending another message.`;
+            formMessage.className = "form-message error";
+            formMessage.style.display = "block";
+            setTimeout(() => { formMessage.style.display = "none"; }, 4000);
+            return;
+        }
 
-    // ===== reCAPTCHA Verification & Token Extraction =====
-    let recaptchaToken = "";
-    if (typeof grecaptcha !== "undefined" && typeof grecaptcha.getResponse === "function") {
-        const recaptchaWidget = document.querySelector(".g-recaptcha");
+        // ===== Input Sanitization (Strip CR/LF & Control Characters) =====
+        const nameVal = sanitizeSingleLineInput(contactForm.name.value, 100);
+        const emailVal = sanitizeSingleLineInput(contactForm.email.value, 100);
+        const subjectVal = sanitizeSingleLineInput(contactForm.subject.value, 150);
+        const messageVal = sanitizeMultiLineInput(contactForm.message.value, 2000);
+
+        const emailRegex = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/;
+        if (!nameVal || !emailVal || !subjectVal || !messageVal) {
+            formMessage.textContent = "⚠️ Please fill in all required fields.";
+            formMessage.className = "form-message error";
+            formMessage.style.display = "block";
+            setTimeout(() => { formMessage.style.display = "none"; }, 4000);
+            return;
+        }
+
+        if (!emailRegex.test(emailVal)) {
+            formMessage.textContent = "⚠️ Please enter a valid email address.";
+            formMessage.className = "form-message error";
+            formMessage.style.display = "block";
+            setTimeout(() => { formMessage.style.display = "none"; }, 4000);
+            return;
+        }
+
+        // ===== Fail-Closed reCAPTCHA Verification & Token Extraction =====
+        let recaptchaToken = "";
+        const recaptchaWidget = contactForm.querySelector(".g-recaptcha");
         if (recaptchaWidget) {
+            if (typeof grecaptcha === "undefined" || typeof grecaptcha.getResponse !== "function") {
+                formMessage.textContent = "⚠️ Security verification failed to load. Please disable any script blockers and refresh.";
+                formMessage.className = "form-message error";
+                formMessage.style.display = "block";
+                setTimeout(() => { formMessage.style.display = "none"; }, 5000);
+                return;
+            }
+
             recaptchaToken = grecaptcha.getResponse();
             if (!recaptchaToken) {
                 formMessage.textContent = "⚠️ Please complete the reCAPTCHA verification.";
                 formMessage.className = "form-message error";
                 formMessage.style.display = "block";
                 setTimeout(() => { formMessage.style.display = "none"; }, 4000);
-                return; // Stop form submission
+                return;
             }
         }
-    }
 
-    const submitBtn = contactForm.querySelector("button");
-    const btnText = submitBtn.querySelector("span");
-    const btnIcon = submitBtn.querySelector("i");
-
-    // Button loading state
-    btnText.textContent = "Sending...";
-    btnIcon.classList.remove("fa-paper-plane");
-    btnIcon.classList.add("fa-spinner", "fa-spin");
-    submitBtn.disabled = true;
-
-    // Clear old messages
-    formMessage.style.display = "none";
-    formMessage.className = "form-message";
-
-    const templateParams = {
-        from_name: nameVal,
-        from_email: emailVal,
-        subject: subjectVal,
-        message: messageVal,
-        "g-recaptcha-response": recaptchaToken // Forward token for EmailJS server-side verification
-    };
-
-    emailjs
-        .send(
-            "service_8mguzri",   // YOUR SERVICE ID
-            "template_73gpdz4",  // YOUR TEMPLATE ID
-            templateParams
-        )
-        .then(() => {
-            formMessage.textContent =
-                "✅ Message sent successfully! I'll get back to you soon.";
-            formMessage.classList.add("success");
+        if (typeof emailjs === "undefined" || typeof emailjs.send !== "function") {
+            formMessage.textContent = "⚠️ Messaging service is temporarily unavailable. Please reach out directly via email.";
+            formMessage.className = "form-message error";
             formMessage.style.display = "block";
+            setTimeout(() => { formMessage.style.display = "none"; }, 5000);
+            return;
+        }
 
-            // Save successful submission timestamp for cooldown
-            localStorage.setItem("last_contact_submitted_at", Date.now().toString());
+        const submitBtn = contactForm.querySelector("button");
+        const btnText = submitBtn.querySelector("span");
+        const btnIcon = submitBtn.querySelector("i");
 
-            contactForm.reset();
-            if (typeof grecaptcha !== "undefined" && typeof grecaptcha.reset === "function") {
-                grecaptcha.reset();
-            }
-        })
-        .catch((error) => {
-            console.error("EmailJS Error:", error);
+        // Button loading state
+        btnText.textContent = "Sending...";
+        btnIcon.classList.remove("fa-paper-plane");
+        btnIcon.classList.add("fa-spinner", "fa-spin");
+        submitBtn.disabled = true;
 
-            const errorDetail = error?.text || error?.message || "Failed to deliver message.";
-            formMessage.textContent = `❌ Error: ${errorDetail}`;
-            formMessage.classList.add("error");
-            formMessage.style.display = "block";
+        // Clear old messages
+        formMessage.style.display = "none";
+        formMessage.className = "form-message";
 
-            if (typeof grecaptcha !== "undefined" && typeof grecaptcha.reset === "function") {
-                grecaptcha.reset();
-            }
-        })
-        .finally(() => {
-            // Restore button
-            btnText.textContent = "Send Message";
-            btnIcon.classList.remove("fa-spinner", "fa-spin");
-            btnIcon.classList.add("fa-paper-plane");
-            submitBtn.disabled = false;
+        const templateParams = {
+            from_name: nameVal,
+            from_email: emailVal,
+            subject: subjectVal,
+            message: messageVal,
+            "g-recaptcha-response": recaptchaToken // Forward token for EmailJS server-side verification
+        };
 
-            // Auto-hide message
-            setTimeout(() => {
-                formMessage.style.display = "none";
-            }, 5000);
-        });
-});
+        emailjs
+            .send(
+                "service_8mguzri",   // YOUR SERVICE ID
+                "template_73gpdz4",  // YOUR TEMPLATE ID
+                templateParams
+            )
+            .then(() => {
+                formMessage.textContent =
+                    "✅ Message sent successfully! I'll get back to you soon.";
+                formMessage.classList.add("success");
+                formMessage.style.display = "block";
+
+                // Save successful submission timestamp for cooldown
+                localStorage.setItem("last_contact_submitted_at", Date.now().toString());
+
+                contactForm.reset();
+                if (typeof grecaptcha !== "undefined" && typeof grecaptcha.reset === "function") {
+                    grecaptcha.reset();
+                }
+            })
+            .catch(() => {
+                // Avoid reflecting raw upstream diagnostic/account error messages to end users (CWE-209)
+                formMessage.textContent = "❌ Unable to send your message right now. Please try again later or reach out directly via email.";
+                formMessage.classList.add("error");
+                formMessage.style.display = "block";
+
+                if (typeof grecaptcha !== "undefined" && typeof grecaptcha.reset === "function") {
+                    grecaptcha.reset();
+                }
+            })
+            .finally(() => {
+                // Restore button
+                btnText.textContent = "Send Message";
+                btnIcon.classList.remove("fa-spinner", "fa-spin");
+                btnIcon.classList.add("fa-paper-plane");
+                submitBtn.disabled = false;
+
+                // Auto-hide message
+                setTimeout(() => {
+                    formMessage.style.display = "none";
+                }, 5000);
+            });
+    });
+}
 
 // ===================================
 // BACK TO TOP BUTTON
@@ -547,10 +631,13 @@ if (backToTop) {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const href = this.getAttribute('href');
+        if (!href || !/^#[A-Za-z][\w:-]*$/.test(href)) {
+            return;
+        }
 
-        if (href && href !== '#' && document.querySelector(href)) {
+        const target = document.getElementById(href.slice(1));
+        if (target) {
             e.preventDefault();
-            const target = document.querySelector(href);
             const navbar = document.querySelector('.navbar');
             const navHeight = navbar ? navbar.offsetHeight : 70;
 
@@ -743,7 +830,7 @@ function init3DCarousel(carouselId, autoPlayInterval = 6000) {
 
     // Build pagination dots
     if (indicatorsContainer) {
-        indicatorsContainer.innerHTML = '';
+        indicatorsContainer.replaceChildren();
         cards.forEach((_, idx) => {
             const dot = document.createElement('button');
             dot.className = `carousel-dot ${idx === 0 ? 'is-active' : ''}`;
@@ -908,22 +995,32 @@ init3DCarousel('certificatesCarousel', 5500);
 // ANTI-SCRAPING CONTACT HYDRATION
 // ===================================
 function hydrateObfuscatedContacts() {
-    // Contact section text
+    const emailUserPattern = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}$/;
+    const emailDomainPattern = /^[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/;
+    const digitsOnlyPattern = /^\d{1,15}$/;
+
+    // Contact section text (built via safe DOM APIs without innerHTML)
     document.querySelectorAll(".obfuscated-email").forEach(el => {
         const user = el.getAttribute("data-user");
         const domain = el.getAttribute("data-domain");
-        if (user && domain) {
+        if (user && domain && emailUserPattern.test(user) && emailDomainPattern.test(domain)) {
             const email = `${user}@${domain}`;
-            el.innerHTML = `<a href="mailto:${email}" style="color: inherit; text-decoration: none;">${email}</a>`;
+            const link = document.createElement("a");
+            link.href = `mailto:${email}`;
+            link.textContent = email;
+            el.replaceChildren(link);
         }
     });
 
     document.querySelectorAll(".obfuscated-phone").forEach(el => {
         const country = el.getAttribute("data-country");
         const num = el.getAttribute("data-num");
-        if (country && num) {
+        if (country && num && digitsOnlyPattern.test(country) && digitsOnlyPattern.test(num)) {
             const phone = `+${country} ${num}`;
-            el.innerHTML = `<a href="tel:+${country}${num}" style="color: inherit; text-decoration: none;">${phone}</a>`;
+            const link = document.createElement("a");
+            link.href = `tel:+${country}${num}`;
+            link.textContent = phone;
+            el.replaceChildren(link);
         }
     });
 
@@ -931,14 +1028,14 @@ function hydrateObfuscatedContacts() {
     document.querySelectorAll(".obfuscated-email-btn").forEach(btn => {
         const user = btn.getAttribute("data-user");
         const domain = btn.getAttribute("data-domain");
-        if (user && domain) {
+        if (user && domain && emailUserPattern.test(user) && emailDomainPattern.test(domain)) {
             btn.href = `mailto:${user}@${domain}`;
         }
     });
 
     document.querySelectorAll(".obfuscated-wa-btn").forEach(btn => {
         const phone = btn.getAttribute("data-phone");
-        if (phone) {
+        if (phone && /^\d{6,15}$/.test(phone)) {
             btn.href = `https://wa.me/${phone}`;
         }
     });
@@ -946,7 +1043,7 @@ function hydrateObfuscatedContacts() {
     document.querySelectorAll(".obfuscated-tel-btn").forEach(btn => {
         const country = btn.getAttribute("data-country");
         const num = btn.getAttribute("data-num");
-        if (country && num) {
+        if (country && num && digitsOnlyPattern.test(country) && digitsOnlyPattern.test(num)) {
             btn.href = `tel:+${country}${num}`;
         }
     });
