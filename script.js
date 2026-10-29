@@ -33,22 +33,22 @@ const projectsData = [
         liveLink: "https://example.com",
         githubLink: "https://github.com"
     },
-    // {
-    //     title: "Task Management System",
-    //     description: "A collaborative project management tool designed for teams. Real-time synchronization ensures all team members stay updated with task progress and changes.",
-    //     image: "https://via.placeholder.com/800x400",
-    //     features: [
-    //         "Real-time task updates",
-    //         "Team collaboration tools",
-    //         "Kanban board interface",
-    //         "Task assignment and tracking",
-    //         "File attachments and comments",
-    //         "Progress analytics and reporting"
-    //     ],
-    //     technologies: ["Vue.js", "Firebase", "Socket.io", "Vuex"],
-    //     liveLink: "https://example.com",
-    //     githubLink: "https://github.com"
-    // },
+    {
+        title: "Task Management System",
+        description: "A collaborative project management tool designed for teams. Real-time synchronization ensures all team members stay updated with task progress and changes.",
+        image: "images/portfolio3.jpg",
+        features: [
+            "Real-time task updates",
+            "Team collaboration tools",
+            "Kanban board interface",
+            "Task assignment and tracking",
+            "File attachments and comments",
+            "Progress analytics and reporting"
+        ],
+        technologies: ["Vue.js", "Firebase", "Socket.io", "Vuex"],
+        liveLink: "https://example.com",
+        githubLink: "https://github.com"
+    }
 ];
 
 // ===================================
@@ -137,6 +137,7 @@ const sections = document.querySelectorAll('section');
 // ===================================
 
 const progressBar = document.querySelector('.scroll-progress-bar');
+const backToTop = document.querySelector('.back-to-top');
 
 const handleScrollUpdates = () => {
     // 1. Update Reading Progress Bar
@@ -147,9 +148,11 @@ const handleScrollUpdates = () => {
 
     // 2. Update Active Navigation Link
     let current = '';
+    const navbarEl = document.querySelector('.navbar');
+    const navOffset = navbarEl ? navbarEl.offsetHeight : 70;
     sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        if (window.pageYOffset >= sectionTop - 100) {
+        const sectionTop = section.getBoundingClientRect().top + window.pageYOffset;
+        if (window.pageYOffset >= sectionTop - navOffset - 40) {
             current = section.getAttribute('id');
         }
     });
@@ -162,10 +165,12 @@ const handleScrollUpdates = () => {
     });
 
     // 3. Back to Top Button Visibility
-    if (window.pageYOffset > 300) {
-        backToTop.classList.add('visible');
-    } else {
-        backToTop.classList.remove('visible');
+    if (backToTop) {
+        if (window.pageYOffset > 300) {
+            backToTop.classList.add('visible');
+        } else {
+            backToTop.classList.remove('visible');
+        }
     }
 };
 
@@ -252,6 +257,7 @@ const counters = document.querySelectorAll('.counter');
 let counterStarted = false;
 
 function animateCounters() {
+    if (!counters || counters.length === 0) return;
     counters.forEach(counter => {
         const target = parseInt(counter.getAttribute('data-target'));
         const duration = 2000;
@@ -393,7 +399,7 @@ document.addEventListener('keydown', (e) => {
 // ===================================
 // EMAIL INTEGRATION (EmailJS)
 // ===================================
-// ================= CONTACT FORM EMAILJS =================
+// ================= CONTACT FORM EMAILJS (HARDENED) =================
 
 const contactForm = document.getElementById("contactForm");
 const formMessage = document.querySelector(".form-message");
@@ -401,14 +407,56 @@ const formMessage = document.querySelector(".form-message");
 contactForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    // ===== reCAPTCHA Validation =====
-    const recaptchaResponse = grecaptcha.getResponse();
-    if (!recaptchaResponse) {
-        formMessage.textContent = "⚠️ Please complete the reCAPTCHA verification.";
+    // ===== Rate-Limiting / Submission Cooldown (60 seconds) =====
+    const SUBMISSION_COOLDOWN_MS = 60000;
+    const lastSentTime = localStorage.getItem("last_contact_submitted_at");
+    const currentTime = Date.now();
+    if (lastSentTime && currentTime - parseInt(lastSentTime, 10) < SUBMISSION_COOLDOWN_MS) {
+        const remainingSec = Math.ceil((SUBMISSION_COOLDOWN_MS - (currentTime - parseInt(lastSentTime, 10))) / 1000);
+        formMessage.textContent = `⏳ Please wait ${remainingSec}s before sending another message.`;
         formMessage.className = "form-message error";
         formMessage.style.display = "block";
         setTimeout(() => { formMessage.style.display = "none"; }, 4000);
-        return; // Stop form submission
+        return;
+    }
+
+    // ===== Input Sanitization & Trimming =====
+    const nameVal = contactForm.name.value.trim().slice(0, 100);
+    const emailVal = contactForm.email.value.trim().slice(0, 100);
+    const subjectVal = contactForm.subject.value.trim().slice(0, 150);
+    const messageVal = contactForm.message.value.trim().slice(0, 2000);
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!nameVal || !emailVal || !subjectVal || !messageVal) {
+        formMessage.textContent = "⚠️ Please fill in all required fields.";
+        formMessage.className = "form-message error";
+        formMessage.style.display = "block";
+        setTimeout(() => { formMessage.style.display = "none"; }, 4000);
+        return;
+    }
+
+    if (!emailRegex.test(emailVal)) {
+        formMessage.textContent = "⚠️ Please enter a valid email address.";
+        formMessage.className = "form-message error";
+        formMessage.style.display = "block";
+        setTimeout(() => { formMessage.style.display = "none"; }, 4000);
+        return;
+    }
+
+    // ===== reCAPTCHA Verification & Token Extraction =====
+    let recaptchaToken = "";
+    if (typeof grecaptcha !== "undefined" && typeof grecaptcha.getResponse === "function") {
+        const recaptchaWidget = document.querySelector(".g-recaptcha");
+        if (recaptchaWidget) {
+            recaptchaToken = grecaptcha.getResponse();
+            if (!recaptchaToken) {
+                formMessage.textContent = "⚠️ Please complete the reCAPTCHA verification.";
+                formMessage.className = "form-message error";
+                formMessage.style.display = "block";
+                setTimeout(() => { formMessage.style.display = "none"; }, 4000);
+                return; // Stop form submission
+            }
+        }
     }
 
     const submitBtn = contactForm.querySelector("button");
@@ -426,16 +474,17 @@ contactForm.addEventListener("submit", function (e) {
     formMessage.className = "form-message";
 
     const templateParams = {
-        from_name: contactForm.name.value,
-        from_email: contactForm.email.value,
-        subject: contactForm.subject.value,
-        message: contactForm.message.value,
+        from_name: nameVal,
+        from_email: emailVal,
+        subject: subjectVal,
+        message: messageVal,
+        "g-recaptcha-response": recaptchaToken // Forward token for EmailJS server-side verification
     };
 
     emailjs
         .send(
-            "service_8mguzri",   // ✅ YOUR SERVICE ID
-            "template_73gpdz4",  // ✅ YOUR TEMPLATE ID
+            "service_8mguzri",   // YOUR SERVICE ID
+            "template_73gpdz4",  // YOUR TEMPLATE ID
             templateParams
         )
         .then(() => {
@@ -444,18 +493,25 @@ contactForm.addEventListener("submit", function (e) {
             formMessage.classList.add("success");
             formMessage.style.display = "block";
 
+            // Save successful submission timestamp for cooldown
+            localStorage.setItem("last_contact_submitted_at", Date.now().toString());
+
             contactForm.reset();
-            grecaptcha.reset(); // ✅ Reset reCAPTCHA after success
+            if (typeof grecaptcha !== "undefined" && typeof grecaptcha.reset === "function") {
+                grecaptcha.reset();
+            }
         })
         .catch((error) => {
             console.error("EmailJS Error:", error);
 
-            const errorDetail = error?.text || error?.message || JSON.stringify(error);
-            formMessage.textContent = `❌ Failed: ${errorDetail}`;
+            const errorDetail = error?.text || error?.message || "Failed to deliver message.";
+            formMessage.textContent = `❌ Error: ${errorDetail}`;
             formMessage.classList.add("error");
             formMessage.style.display = "block";
 
-            grecaptcha.reset(); // ✅ Reset reCAPTCHA on error too
+            if (typeof grecaptcha !== "undefined" && typeof grecaptcha.reset === "function") {
+                grecaptcha.reset();
+            }
         })
         .finally(() => {
             // Restore button
@@ -475,15 +531,14 @@ contactForm.addEventListener("submit", function (e) {
 // BACK TO TOP BUTTON
 // ===================================
 
-const backToTop = document.querySelector('.back-to-top');
-
-
-backToTop.addEventListener('click', () => {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
+if (backToTop) {
+    backToTop.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     });
-});
+}
 
 // ===================================
 // SMOOTH SCROLL FOR ALL LINKS
@@ -493,15 +548,31 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const href = this.getAttribute('href');
 
-        if (href !== '#' && document.querySelector(href)) {
+        if (href && href !== '#' && document.querySelector(href)) {
             e.preventDefault();
             const target = document.querySelector(href);
-            const offsetTop = target.offsetTop - 70;
+            const navbar = document.querySelector('.navbar');
+            const navHeight = navbar ? navbar.offsetHeight : 70;
+
+            let targetTop = 0;
+            if (href !== '#home') {
+                const targetRect = target.getBoundingClientRect();
+                targetTop = window.pageYOffset + targetRect.top - navHeight;
+            }
 
             window.scrollTo({
-                top: offsetTop,
+                top: Math.max(0, Math.round(targetTop)),
                 behavior: 'smooth'
             });
+
+            // Close mobile menu if open
+            const hamburger = document.querySelector('.hamburger');
+            const navMenu = document.querySelector('.nav-menu');
+            if (hamburger && navMenu && hamburger.classList.contains('active')) {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+            }
         }
     });
 });
@@ -530,15 +601,7 @@ if ('IntersectionObserver' in window) {
 // ===================================
 // PARALLAX EFFECT (Optional Enhancement)
 // ===================================
-
-window.addEventListener('scroll', () => {
-    const scrolled = window.pageYOffset;
-    const heroImage = document.querySelector('.hero-image');
-
-    if (heroImage && scrolled < window.innerHeight) {
-        heroImage.style.transform = `translateY(${scrolled * 0.3}px)`;
-    }
-});
+// Disabled vertical shift on .hero-image to keep the Hero poster evenly aligned with Hero content
 
 // ===================================
 // CURSOR EFFECT (Optional Enhancement)
@@ -603,36 +666,36 @@ if (document.getElementById('particles-js')) {
     particlesJS('particles-js', {
         particles: {
             number: {
-                value: 80,
+                value: 38,
                 density: {
                     enable: true,
-                    value_area: 800
+                    value_area: 900
                 }
             },
             color: {
-                value: '#6366f1'
+                value: ['#101011', '#1E73AE', '#D02220', '#F3B82F']
             },
             shape: {
                 type: 'circle'
             },
             opacity: {
-                value: 0.5,
+                value: 0.4,
                 random: false
             },
             size: {
-                value: 3,
-                random: true
+                value: 2.5,
+                random: false
             },
             line_linked: {
                 enable: true,
-                distance: 150,
-                color: '#6366f1',
-                opacity: 0.4,
+                distance: 145,
+                color: '#101011',
+                opacity: 0.16,
                 width: 1
             },
             move: {
                 enable: true,
-                speed: 2,
+                speed: 0.6,
                 direction: 'none',
                 random: false,
                 straight: false,
@@ -657,11 +720,249 @@ if (document.getElementById('particles-js')) {
         retina_detect: true
     });
 }
+
+
+// ===================================
+// 3D CAROUSEL ENGINE (PROJECTS & CERTIFICATES)
+// ===================================
+
+function init3DCarousel(carouselId, autoPlayInterval = 6000) {
+    const container = document.getElementById(carouselId);
+    if (!container) return;
+
+    const cards = Array.from(container.querySelectorAll('.carousel-3d-card'));
+    const prevBtn = container.querySelector('.carousel-prev');
+    const nextBtn = container.querySelector('.carousel-next');
+    const indicatorsContainer = container.querySelector('.carousel-indicators');
+
+    if (!cards.length) return;
+
+    let currentIndex = 0;
+    let autoPlayTimer = null;
+    let isHovered = false;
+
+    // Build pagination dots
+    if (indicatorsContainer) {
+        indicatorsContainer.innerHTML = '';
+        cards.forEach((_, idx) => {
+            const dot = document.createElement('button');
+            dot.className = `carousel-dot ${idx === 0 ? 'is-active' : ''}`;
+            dot.setAttribute('aria-label', `Go to slide ${idx + 1}`);
+            dot.addEventListener('click', (e) => {
+                e.stopPropagation();
+                goToSlide(idx);
+            });
+            indicatorsContainer.appendChild(dot);
+        });
+    }
+
+    const dots = indicatorsContainer ? Array.from(indicatorsContainer.querySelectorAll('.carousel-dot')) : [];
+
+    function updateCarousel() {
+        const total = cards.length;
+        const isMobile = window.innerWidth <= 768;
+
+        cards.forEach((card, i) => {
+            let diff = i - currentIndex;
+
+            // Cyclic distance around circle
+            if (diff > total / 2) diff -= total;
+            if (diff < -total / 2) diff += total;
+
+            const absDiff = Math.abs(diff);
+
+            if (diff === 0) {
+                // Active Card (Front and Center)
+                card.classList.add('is-active');
+                card.style.transform = 'translateX(0) translateZ(0) rotateY(0deg) scale(1)';
+                card.style.opacity = '1';
+                card.style.zIndex = '10';
+                card.style.filter = 'none';
+                card.style.pointerEvents = 'auto';
+            } else if (absDiff === 1) {
+                // Immediate Neighbors (Flanking in 3D perspective)
+                card.classList.remove('is-active');
+                const xOffset = diff * (isMobile ? 42 : 58);
+                const rotY = diff > 0 ? -26 : 26;
+                const scale = isMobile ? 0.88 : 0.85;
+                const zDist = isMobile ? -100 : -160;
+
+                card.style.transform = `translateX(${xOffset}%) translateZ(${zDist}px) rotateY(${rotY}deg) scale(${scale})`;
+                card.style.opacity = '0.7';
+                card.style.zIndex = '5';
+                card.style.filter = 'brightness(0.92)';
+                card.style.pointerEvents = 'auto';
+            } else if (absDiff === 2 && total > 3) {
+                // Outer Flanks for 5+ cards (Certificates)
+                card.classList.remove('is-active');
+                const xOffset = diff > 0 ? (isMobile ? 75 : 98) : (isMobile ? -75 : -98);
+                const rotY = diff > 0 ? -38 : 38;
+                const scale = isMobile ? 0.72 : 0.70;
+                const zDist = isMobile ? -200 : -300;
+
+                card.style.transform = `translateX(${xOffset}%) translateZ(${zDist}px) rotateY(${rotY}deg) scale(${scale})`;
+                card.style.opacity = '0.35';
+                card.style.zIndex = '2';
+                card.style.filter = 'brightness(0.85)';
+                card.style.pointerEvents = 'auto';
+            } else {
+                // Hidden beyond visible arc
+                card.classList.remove('is-active');
+                const sign = diff > 0 ? 1 : -1;
+                card.style.transform = `translateX(${sign * 120}%) translateZ(-400px) rotateY(${sign * -45}deg) scale(0.6)`;
+                card.style.opacity = '0';
+                card.style.zIndex = '0';
+                card.style.pointerEvents = 'none';
+            }
+        });
+
+        // Update dot indicators
+        dots.forEach((dot, idx) => {
+            dot.classList.toggle('is-active', idx === currentIndex);
+        });
+    }
+
+    function goToSlide(index) {
+        const total = cards.length;
+        currentIndex = (index + total) % total;
+        updateCarousel();
+        resetAutoPlay();
+    }
+
+    function nextSlide() {
+        goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+        goToSlide(currentIndex - 1);
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevSlide(); });
+    if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextSlide(); });
+
+    // Allow clicking side cards to bring them to front
+    cards.forEach((card, idx) => {
+        card.addEventListener('click', (e) => {
+            // If already center card, let internal buttons/links fire
+            if (idx === currentIndex) return;
+
+            e.preventDefault();
+            goToSlide(idx);
+        });
+    });
+
+    // Touch swipe support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    container.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    container.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const threshold = 45;
+        if (touchStartX - touchEndX > threshold) {
+            nextSlide();
+        } else if (touchEndX - touchStartX > threshold) {
+            prevSlide();
+        }
+    }, { passive: true });
+
+    // Autoplay logic
+    function startAutoPlay() {
+        if (!autoPlayInterval) return;
+        clearInterval(autoPlayTimer);
+        autoPlayTimer = setInterval(() => {
+            if (!isHovered) nextSlide();
+        }, autoPlayInterval);
+    }
+
+    function resetAutoPlay() {
+        clearInterval(autoPlayTimer);
+        startAutoPlay();
+    }
+
+    container.addEventListener('mouseenter', () => { isHovered = true; });
+    container.addEventListener('mouseleave', () => { isHovered = false; });
+
+    // Keyboard navigation
+    container.setAttribute('tabindex', '0');
+    container.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { prevSlide(); }
+        else if (e.key === 'ArrowRight') { nextSlide(); }
+    });
+
+    window.addEventListener('resize', throttle(updateCarousel, 100));
+
+    // Initial setup
+    updateCarousel();
+    startAutoPlay();
+}
+
+// Initialize both 3D Carousels
+init3DCarousel('projectsCarousel', 6000);
+init3DCarousel('certificatesCarousel', 5500);
+
+// ===================================
+// ANTI-SCRAPING CONTACT HYDRATION
+// ===================================
+function hydrateObfuscatedContacts() {
+    // Contact section text
+    document.querySelectorAll(".obfuscated-email").forEach(el => {
+        const user = el.getAttribute("data-user");
+        const domain = el.getAttribute("data-domain");
+        if (user && domain) {
+            const email = `${user}@${domain}`;
+            el.innerHTML = `<a href="mailto:${email}" style="color: inherit; text-decoration: none;">${email}</a>`;
+        }
+    });
+
+    document.querySelectorAll(".obfuscated-phone").forEach(el => {
+        const country = el.getAttribute("data-country");
+        const num = el.getAttribute("data-num");
+        if (country && num) {
+            const phone = `+${country} ${num}`;
+            el.innerHTML = `<a href="tel:+${country}${num}" style="color: inherit; text-decoration: none;">${phone}</a>`;
+        }
+    });
+
+    // Quick contact floating buttons
+    document.querySelectorAll(".obfuscated-email-btn").forEach(btn => {
+        const user = btn.getAttribute("data-user");
+        const domain = btn.getAttribute("data-domain");
+        if (user && domain) {
+            btn.href = `mailto:${user}@${domain}`;
+        }
+    });
+
+    document.querySelectorAll(".obfuscated-wa-btn").forEach(btn => {
+        const phone = btn.getAttribute("data-phone");
+        if (phone) {
+            btn.href = `https://wa.me/${phone}`;
+        }
+    });
+
+    document.querySelectorAll(".obfuscated-tel-btn").forEach(btn => {
+        const country = btn.getAttribute("data-country");
+        const num = btn.getAttribute("data-num");
+        if (country && num) {
+            btn.href = `tel:+${country}${num}`;
+        }
+    });
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", hydrateObfuscatedContacts);
+} else {
+    hydrateObfuscatedContacts();
+}
+
 // ===================================
 // CONSOLE MESSAGE
 // ===================================
 
 console.log('%c👋 Hey there! Welcome to my portfolio!',
-    'color: #6366f1; font-size: 20px; font-weight: bold;');
+    'color: #1E73AE; font-size: 20px; font-weight: bold;');
 console.log('%cLooking for talented developers? Let\'s connect!',
-    'color: #8b5cf6; font-size: 14px;');
+    'color: #D02220; font-size: 14px;');

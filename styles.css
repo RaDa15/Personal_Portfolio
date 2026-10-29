@@ -1,40 +1,45 @@
 /* ===================================
    GLOBAL STYLES & VARIABLES
+   Bauhaus + Architectural Blueprint Theme
+   Extracted from images/home_pic.jpeg
    =================================== */
 
 :root {
-    /* Colors */
-    --primary-color: #6366f1;
-    --secondary-color: #8b5cf6;
-    --accent-color: #ec4899;
-    --text-color: #1f2937;
-    --text-light: #6b7280;
-    --bg-color: #ffffff;
-    --bg-secondary: #f9fafb;
-    --border-color: #e5e7eb;
+    /* Exact Color Palette Extracted from home_pic.jpeg */
+    --primary-color: #1E73AE;       /* Cobalt Blue */
+    --primary-dark: #155582;        /* Deep Cobalt */
+    --secondary-color: #D02220;     /* Bauhaus Crimson Red */
+    --accent-color: #F3B82F;        /* Bauhaus Amber Gold */
+    --terminal-bg: #14181F;         /* Dark Code Terminal Block */
+    --ink-heading: #101011;         /* Architectural Drafting Ink */
+    --text-color: #101011;
+    --text-light: #434C59;
+    --bg-color: #FEFDF9;            /* Exact Edge Paper White of home_pic.jpeg */
+    --bg-secondary: #F7F5EE;        /* Warm Drafting Sheet Tint */
+    --border-color: rgba(16, 16, 17, 0.16);
+    --ink-border: #101011;
+    --draft-line: rgba(16, 16, 17, 0.14);
+    --grid-minor: rgba(30, 115, 174, 0.055);
+    --grid-major: rgba(16, 16, 17, 0.055);
     --success-color: #10b981;
-    --error-color: #ef4444;
+    --error-color: #D02220;
 
     /* Spacing */
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;
     --spacing-md: 2rem;
-    --spacing-lg: 4rem;
-    --spacing-xl: 6rem;
+    --spacing-lg: 3.5rem;
+    --spacing-xl: 5.5rem;
 
-    /* Typography */
-    --font-family: 'Poppins', sans-serif;
+    /* Typography: Runiga + Plus Jakarta Sans + JetBrains Mono */
+    --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-brand: 'Runiga', 'Cormorant Garamond', Georgia, serif;
+    --font-mono: 'JetBrains Mono', monospace;
     --font-size-base: 16px;
-    --line-height-base: 1.6;
+    --line-height-base: 1.65;
 
     /* Transitions */
-    --transition-speed: 0.3s;
-
-    /* Shadows */
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
-    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+    --transition-speed: 0.25s;
 
     /* Z-Index Ladder */
     --z-negative: -1;
@@ -45,32 +50,42 @@
     --z-preloader: 10000;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar (Sharp Bauhaus Style) */
 ::-webkit-scrollbar {
     width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
+    background: var(--bg-color);
+    border-left: 1px solid var(--draft-line);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(var(--primary-color), var(--secondary-color));
-    border-radius: 10px;
-    border: 2px solid var(--bg-secondary);
+    background: var(--ink-heading);
+    border: 2px solid var(--bg-color);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-color);
+    background: var(--primary-color);
 }
 
-/* Dark Mode Variables */
+/* Dark Mode Variables (Terminal Slate inspired by home_pic.jpeg code blocks) */
 body.dark-mode {
-    --text-color: #f9fafb;
-    --text-light: #d1d5db;
-    --bg-color: #111827;
-    --bg-secondary: #1f2937;
-    --border-color: #374151;
+    --primary-color: #3898EC;
+    --primary-dark: #1E73AE;
+    --secondary-color: #E53935;
+    --accent-color: #F3B82F;
+    --terminal-bg: #1B222D;
+    --ink-heading: #FEFDF9;
+    --text-color: #F3F2EC;
+    --text-light: #B2BCCB;
+    --bg-color: #10141B;
+    --bg-secondary: #151B24;
+    --border-color: rgba(254, 253, 249, 0.18);
+    --ink-border: rgba(254, 253, 249, 0.55);
+    --draft-line: rgba(254, 253, 249, 0.14);
+    --grid-minor: rgba(56, 152, 236, 0.06);
+    --grid-major: rgba(254, 253, 249, 0.05);
 }
 
 /* Reset & Base Styles */
@@ -82,6 +97,7 @@ body.dark-mode {
 
 html {
     scroll-behavior: smooth;
+    scroll-padding-top: 70px;
     font-size: var(--font-size-base);
 }
 
@@ -92,12 +108,28 @@ body {
     line-height: var(--line-height-base);
     transition: background-color var(--transition-speed), color var(--transition-speed);
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Brand & Heading Typography (Runiga) */
+h1,
+h2,
+h3,
+h4,
+.nav-brand h1,
+.section-title,
+.modal-title {
+    font-family: var(--font-brand);
+    font-weight: 400;
+    letter-spacing: 0.025em;
+    font-variant-ligatures: common-ligatures;
+    font-feature-settings: "liga" 1, "clig" 1;
 }
 
 a {
     text-decoration: none;
     color: inherit;
-    transition: color var(--transition-speed);
+    transition: color var(--transition-speed), background-color var(--transition-speed), border-color var(--transition-speed);
 }
 
 img {
@@ -113,15 +145,53 @@ ul {
 /* Container */
 .container {
     max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
     padding: 0 var(--spacing-md);
+    position: relative;
+    z-index: 2;
 }
 
-/* Section Styles */
+/* Section Styles & Architectural Blueprint Grid (All sections except Hero) */
 section {
-    padding: var(--spacing-xl) 0;
+    min-height: calc(100vh - 70px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    scroll-margin-top: 70px;
+    padding: 3rem 0;
+    position: relative;
 }
 
+section:not(.hero) {
+    border-top: 1px solid var(--draft-line);
+    background-color: var(--bg-color);
+    background-image:
+        linear-gradient(var(--grid-major) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+        linear-gradient(var(--grid-minor) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px);
+    background-size: 160px 160px, 160px 160px, 32px 32px, 32px 32px;
+}
+
+/* Architectural Dimension Node Dot on Section Dividers */
+section:not(.hero)::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ink-heading);
+    box-shadow: -72px 0 0 var(--primary-color), 72px 0 0 var(--secondary-color);
+    z-index: 3;
+}
+
+/* Particles strictly masked to far-left of Hero so right side stays pure #FEFDF9 */
 #particles-js {
     position: absolute;
     width: 100%;
@@ -129,6 +199,9 @@ section {
     top: 0;
     left: 0;
     z-index: 0;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.35) 34%, transparent 46%);
+    mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.35) 34%, transparent 46%);
 }
 
 .hero .container {
@@ -136,65 +209,101 @@ section {
     z-index: 1;
 }
 
+/* Section Titles with Bauhaus + Drafting Rule Motif */
 .section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
+    font-family: var(--font-brand);
+    font-size: 2.75rem;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    line-height: 1.2;
+    color: var(--ink-heading);
     text-align: center;
-    margin-bottom: var(--spacing-md);
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    margin-bottom: 0.85rem;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 132px;
+    height: 4px;
+    margin: 0.55rem auto 0;
+    background: linear-gradient(
+        90deg,
+        var(--ink-heading) 0 44px,
+        var(--primary-color) 44px 74px,
+        var(--accent-color) 74px 102px,
+        var(--secondary-color) 102px 132px
+    );
 }
 
 .section-subtitle {
-    text-align: center;
+    font-size: 1.02rem;
     color: var(--text-light);
-    font-size: 1.1rem;
-    margin-bottom: var(--spacing-lg);
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.6;
 }
 
-/* Gradient Text */
+/* Bauhaus Editorial Block Highlight on Hero Name (matching home_pic.jpeg flat color blocks) */
 .gradient-text {
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--ink-heading);
+    background: linear-gradient(transparent 64%, rgba(243, 184, 47, 0.62) 64% 93%, transparent 93%);
+    padding: 0 0.08em;
+    position: relative;
 }
 
-/* Buttons */
+body.dark-mode .gradient-text {
+    color: var(--ink-heading);
+    background: linear-gradient(transparent 64%, rgba(30, 115, 174, 0.55) 64% 93%, transparent 93%);
+}
+
+/* Sharp Architectural Bauhaus Buttons (Zero Floating, 90-degree Geometry) */
 .btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.875rem 2rem;
-    font-size: 1rem;
+    gap: 0.55rem;
+    padding: 0.82rem 1.75rem;
+    font-size: 0.94rem;
     font-weight: 600;
-    border-radius: 50px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    border-radius: 0;
     cursor: pointer;
-    transition: all var(--transition-speed);
-    border: 2px solid transparent;
+    transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
+    border: 1.5px solid var(--ink-border);
+    box-shadow: none;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
+    background: var(--ink-heading);
+    color: var(--bg-color);
+    border-color: var(--ink-heading);
+    border-left: 5px solid var(--secondary-color);
 }
 
 .btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-lg);
+    background: var(--primary-color);
+    color: #FEFDF9;
+    border-color: var(--primary-color);
+    border-left-color: var(--accent-color);
 }
 
 .btn-secondary {
     background: transparent;
-    color: var(--primary-color);
-    border-color: var(--primary-color);
+    color: var(--ink-heading);
+    border-color: var(--ink-border);
+    border-left: 5px solid var(--primary-color);
 }
 
 .btn-secondary:hover {
-    background: var(--primary-color);
-    color: white;
+    background: var(--accent-color);
+    color: #101011;
+    border-color: #101011;
+    border-left-color: var(--secondary-color);
 }
 
 /* ===================================
@@ -221,12 +330,14 @@ section {
 }
 
 .loader {
-    width: 50px;
-    height: 50px;
-    border: 5px solid var(--border-color);
+    width: 46px;
+    height: 46px;
+    border: 3px solid var(--draft-line);
     border-top-color: var(--primary-color);
+    border-right-color: var(--secondary-color);
+    border-bottom-color: var(--accent-color);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spin 0.9s linear infinite;
 }
 
 @keyframes spin {
@@ -236,32 +347,33 @@ section {
 }
 
 /* ===================================
-   DARK MODE TOGGLE
+   DARK MODE TOGGLE (Sharp Architectural Square)
    =================================== */
 
 .dark-mode-toggle {
     position: fixed;
-    top: 100px;
-    right: 30px;
-    width: 50px;
-    height: 50px;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 50%;
+    top: 86px;
+    right: 28px;
+    width: 44px;
+    height: 44px;
+    background: var(--bg-color);
+    color: var(--ink-heading);
+    border: 1.5px solid var(--ink-border);
+    border-top: 4px solid var(--accent-color);
+    border-radius: 0;
     cursor: pointer;
-    font-size: 1.2rem;
-    box-shadow: var(--shadow-lg);
+    font-size: 1.05rem;
     z-index: 999;
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
 }
 
 .dark-mode-toggle:hover {
-    transform: scale(1.1) rotate(20deg);
+    background: var(--ink-heading);
+    color: var(--bg-color);
 }
 
 /* ===================================
-   NAVIGATION
+   NAVIGATION (Flat Architectural Drafting Header)
    =================================== */
 
 .navbar {
@@ -269,31 +381,35 @@ section {
     top: 0;
     left: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    box-shadow: var(--shadow-sm);
+    background: var(--bg-color);
+    border-bottom: 1px solid var(--border-color);
     z-index: 1000;
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed);
 }
 
 body.dark-mode .navbar {
-    background: rgba(17, 24, 39, 0.95);
+    background: var(--bg-color);
+    border-bottom-color: var(--border-color);
 }
 
 .navbar .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
+    padding: 0.85rem 2rem;
 }
 
 .nav-brand h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
+    font-family: var(--font-brand);
+    font-size: 2.2rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: var(--ink-heading);
 }
 
 .nav-brand span {
-    color: var(--primary-color);
+    color: var(--secondary-color);
 }
 
 .nav-menu {
@@ -303,18 +419,23 @@ body.dark-mode .navbar {
 }
 
 .nav-link {
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
     position: relative;
+    padding-bottom: 2px;
 }
 
 .nav-link::after {
     content: '';
     position: absolute;
-    bottom: -5px;
+    bottom: -4px;
     left: 0;
     width: 0;
     height: 2px;
-    background: var(--primary-color);
+    background: var(--secondary-color);
     transition: width var(--transition-speed);
 }
 
@@ -332,14 +453,14 @@ body.dark-mode .navbar {
 
 .hamburger span {
     width: 25px;
-    height: 3px;
+    height: 2px;
     background: var(--text-color);
-    border-radius: 3px;
+    border-radius: 0;
     transition: all var(--transition-speed);
 }
 
 .hamburger.active span:nth-child(1) {
-    transform: rotate(45deg) translate(8px, 8px);
+    transform: rotate(45deg) translate(6px, 6px);
 }
 
 .hamburger.active span:nth-child(2) {
@@ -347,11 +468,11 @@ body.dark-mode .navbar {
 }
 
 .hamburger.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(8px, -8px);
+    transform: rotate(-45deg) translate(6px, -6px);
 }
 
 /* ===================================
-   HERO SECTION
+   HERO SECTION (Seamless #FEFDF9 Blend with home_pic.jpeg)
    =================================== */
 
 .hero {
@@ -359,127 +480,228 @@ body.dark-mode .navbar {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-top: 80px;
+    padding-top: 72px;
+    padding-bottom: 2rem;
     position: relative;
     overflow: hidden;
+    scroll-margin-top: 0;
+    background-color: var(--bg-color);
+}
+
+/* Subtle Architectural Compass Circle & Drafting Lines on Far-Left Margin */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 16%;
+    left: -110px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    border: 1px solid var(--draft-line);
+    pointer-events: none;
+    z-index: 0;
 }
 
 .hero .container {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 2.5rem;
     align-items: center;
 }
 
+/* Flat Editorial Hero Content (Zero Floating Card) */
+.hero-content {
+    padding: 0.5rem 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    position: relative;
+}
+
+/* Bauhaus 3-Color Bar + Drafting Line Motif above Hero Heading */
+.hero-content::before {
+    content: '';
+    display: block;
+    width: 140px;
+    height: 4px;
+    margin-bottom: 1.25rem;
+    background: linear-gradient(
+        90deg,
+        var(--secondary-color) 0 24px,
+        var(--accent-color) 24px 48px,
+        var(--primary-color) 48px 72px,
+        var(--ink-heading) 72px 140px
+    );
+}
+
 .hero-content h1 {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    line-height: 1.2;
+    font-family: var(--font-brand);
+    font-size: 3.9rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.75rem;
+    line-height: 1.15;
+    color: var(--ink-heading);
 }
 
 .hero-content h2 {
-    font-size: 1.8rem;
+    font-family: var(--font-mono);
+    font-size: 1.18rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
     color: var(--primary-color);
-    margin-bottom: 1rem;
+    margin-bottom: 1.15rem;
+}
+
+/* Terminal prompt matching "> HTML / > CSS / > AI" in home_pic.jpeg */
+.typing-text::before {
+    content: '> ';
+    color: var(--secondary-color);
+    font-weight: 700;
 }
 
 .hero-description {
-    font-size: 1.1rem;
+    font-size: 1.04rem;
     color: var(--text-light);
-    margin-bottom: 2rem;
-    line-height: 1.8;
+    margin-bottom: 1.85rem;
+    line-height: 1.75;
+    max-width: 520px;
+    border-left: 2px solid var(--draft-line);
+    padding-left: 1rem;
 }
 
 .hero-buttons {
     display: flex;
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.85rem;
 }
 
 .social-links {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .social-links a {
-    width: 45px;
-    height: 45px;
+    width: 42px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    background: var(--bg-secondary);
-    font-size: 1.2rem;
-    transition: all var(--transition-speed);
+    border-radius: 0;
+    background: transparent;
+    border: 1px solid var(--ink-border);
+    font-size: 1.1rem;
+    color: var(--ink-heading);
+    transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
 }
 
-.social-links a:hover {
+.social-links a:nth-child(1):hover {
+    background: var(--ink-heading);
+    color: var(--bg-color);
+}
+
+.social-links a:nth-child(2):hover {
     background: var(--primary-color);
-    color: white;
-    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    color: #FEFDF9;
 }
 
+.social-links a:nth-child(3):hover {
+    background: var(--accent-color);
+    border-color: #101011;
+    color: #101011;
+}
+
+.social-links a:nth-child(4):hover {
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: #FEFDF9;
+}
+
+/* Seamless Unframed Home Image — Blends 100% into #FEFDF9 Page Canvas */
 .hero-image {
     display: flex;
     justify-content: center;
+    align-items: center;
+    background: transparent;
 }
 
 .image-wrapper {
     position: relative;
-    width: 400px;
-    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.image-wrapper::before {
+    display: none;
 }
 
 .image-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 10px solid var(--primary-color);
-    box-shadow: var(--shadow-xl);
+    width: auto;
+    height: auto;
+    max-width: min(440px, 100%);
+    max-height: calc(100vh - 105px);
+    object-fit: contain;
+    display: block;
+    background: transparent;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    /* Clamps faint JPEG off-whites (249-254) to pure 255 and multiplies invisibly onto #FEFDF9 */
+    filter: brightness(1.028) contrast(1.02);
+    mix-blend-mode: multiply;
 }
 
+body.dark-mode .image-wrapper img {
+    mix-blend-mode: normal;
+    filter: none;
+    border: 1px solid var(--border-color);
+}
+
+/* Steady Architectural Scroll Indicator (No Bouncing/Floating) */
 .scroll-down {
     position: absolute;
-    bottom: 30px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    animation: bounce 2s infinite;
 }
 
 .scroll-down a {
-    font-size: 2rem;
-    color: var(--primary-color);
+    font-size: 1.25rem;
+    color: var(--ink-heading);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
 }
 
-@keyframes bounce {
+.scroll-down a::before {
+    content: '';
+    width: 1px;
+    height: 18px;
+    background: var(--ink-heading);
+}
 
-    0%,
-    20%,
-    50%,
-    80%,
-    100% {
-        transform: translateY(0) translateX(-50%);
-    }
-
-    40% {
-        transform: translateY(-20px) translateX(-50%);
-    }
-
-    60% {
-        transform: translateY(-10px) translateX(-50%);
-    }
+.scroll-down a:hover {
+    color: var(--secondary-color);
 }
 
 /* Typing Animation */
 .typing-text::after {
-    content: '|';
-    animation: blink 0.7s infinite;
+    content: '_';
+    color: var(--secondary-color);
+    animation: blink 0.8s infinite;
 }
 
 @keyframes blink {
-
     0%,
     100% {
         opacity: 1;
@@ -491,233 +713,599 @@ body.dark-mode .navbar {
 }
 
 /* ===================================
-   ABOUT SECTION
+   ABOUT SECTION (Architectural Drafting + Bauhaus Shapes, Zero Floating)
    =================================== */
 
 .about {
-    background: var(--bg-secondary);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Bauhaus Geometric Semicircle & Compass Watermark from home_pic.jpeg */
+.about::after {
+    content: '';
+    position: absolute;
+    right: -60px;
+    bottom: 8%;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 1px solid var(--draft-line);
+    background: conic-gradient(
+        from 270deg,
+        rgba(243, 184, 47, 0.16) 0deg 90deg,
+        transparent 90deg 180deg,
+        rgba(30, 115, 174, 0.12) 180deg 270deg,
+        transparent 270deg 360deg
+    );
+    pointer-events: none;
+    z-index: 0;
 }
 
 .about-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 3.5rem;
     align-items: center;
-    margin-top: var(--spacing-lg);
+    margin-top: 0.5rem;
+}
+
+/* Flat Architectural Plate Frame with Overhanging Drafting Lines & Bauhaus Corner Block */
+.about-image {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: min(360px, 100%);
+    margin: 0 auto;
+    padding: 0;
+    background: transparent;
+    border: 1.5px solid var(--ink-border);
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Overhanging 1px Architectural Construction Lines */
+.about-image::before {
+    content: '';
+    position: absolute;
+    inset: -12px;
+    border-top: 1px solid var(--draft-line);
+    border-bottom: 1px solid var(--draft-line);
+    pointer-events: none;
+}
+
+/* Flat Solid Bauhaus Offset Corner Block (Cobalt + Crimson, Zero Blur) */
+.about-image::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    right: -12px;
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, var(--primary-color) 0 50%, var(--secondary-color) 50% 100%);
+    z-index: -1;
 }
 
 .about-image img {
-    border-radius: 20px;
-    box-shadow: var(--shadow-lg);
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1085 / 1280;
+    object-fit: cover;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    display: block;
 }
 
-.about-image {
-    display: flex;
-    height: 90%;
-    margin-left: 30%;
+/* Flat Editorial Bio Text on Canvas (No Floating Box) */
+.about-text {
+    padding: 0.5rem 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
 }
 
 .about-text h3 {
-    font-size: 2rem;
+    font-family: var(--font-brand);
+    font-size: 2.15rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
     margin-bottom: 1rem;
-    color: var(--primary-color);
+    color: var(--ink-heading);
+    position: relative;
+    padding-bottom: 0.65rem;
+}
+
+/* Short Bold Editorial Ink Rule ("—") from home_pic.jpeg */
+.about-text h3::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 42px;
+    height: 3px;
+    background: var(--secondary-color);
+    box-shadow: 46px 0 0 var(--accent-color);
 }
 
 .about-text p {
     color: var(--text-light);
-    margin-bottom: 1.5rem;
-    line-height: 1.8;
+    margin-bottom: 1.25rem;
+    line-height: 1.75;
+    font-size: 0.99rem;
 }
 
 .about-btn {
     display: flex;
-    justify-content: center;
-    margin-top: 2rem;
+    justify-content: flex-start;
+    margin-top: 1.75rem;
     gap: 1rem;
 }
 
 /* ===================================
-   SKILLS SECTION
+   SKILLS & TECHNOLOGIES SECTION (Bauhaus Drafting Tiles)
    =================================== */
 
 .tech-stack {
-    padding: 6rem 0;
-    background: var(--bg-secondary)
+    padding: 3rem 0;
+    position: relative;
+    overflow: hidden;
 }
 
 .tech-stack .container {
     text-align: center;
+    margin-bottom: 1rem;
 }
 
-.tech-stack-section {
-    margin-top: var(--spacing-xl);
-    text-align: center;
+.ticker-wrapper {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    padding: 1.25rem 0;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
-.tech-stack-section h3 {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+.ticker-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: tech-ticker-scroll 34s linear infinite;
 }
 
-.tech-icons {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 2rem;
-    max-width: 900px;
-    margin: 0 auto;
+.ticker-track:hover {
+    animation-play-state: paused;
 }
 
+.ticker-group {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding-right: 1.25rem;
+    flex-shrink: 0;
+}
+
+/* Flat Sharp Architectural Tile with Alternating Bauhaus Top Bars */
 .tech-icon {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    padding: 1.5rem;
-    background: var(--bg-secondary);
-    border-radius: 15px;
-    transition: all var(--transition-speed);
+    justify-content: center;
+    gap: 0.7rem;
+    min-width: 132px;
+    padding: 1.35rem 1.2rem;
+    background: var(--bg-color);
+    border: 1px solid var(--ink-border);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 0;
+    box-shadow: none;
+    transition: background-color var(--transition-speed), border-color var(--transition-speed);
     cursor: pointer;
+    user-select: none;
 }
 
-.tech-icon:hover {
-    transform: translateY(-10px);
-    box-shadow: var(--shadow-lg);
+.tech-icon:nth-child(3n+1) {
+    border-top-color: var(--primary-color);
+}
+
+.tech-icon:nth-child(3n+2) {
+    border-top-color: var(--secondary-color);
+}
+
+.tech-icon:nth-child(3n+3) {
+    border-top-color: var(--accent-color);
 }
 
 .tech-icon i {
-    font-size: 3rem;
-    color: var(--primary-color);
+    font-size: 2.45rem;
+    color: var(--ink-heading);
+    transition: color var(--transition-speed);
 }
 
 .tech-icon span {
-    font-weight: 600;
-    font-size: 0.9rem;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.84rem;
+    color: var(--text-color);
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+}
+
+/* Grounded Flat State Change (No Floating Lift) */
+.tech-icon:hover {
+    background: var(--bg-secondary);
+    border-color: var(--ink-heading);
+}
+
+/* Brand Colors on Hover */
+.tech-icon[data-tech="html5"]:hover i { color: #e34f26; }
+.tech-icon[data-tech="css3"]:hover i { color: #1572b6; }
+.tech-icon[data-tech="javascript"]:hover i { color: #d4a800; }
+.tech-icon[data-tech="react"]:hover i { color: var(--primary-color); }
+.tech-icon[data-tech="nodejs"]:hover i { color: #4f8a49; }
+.tech-icon[data-tech="python"]:hover i { color: #3776ab; }
+.tech-icon[data-tech="mongodb"]:hover i { color: #47a248; }
+.tech-icon[data-tech="git"]:hover i { color: #f05032; }
+.tech-icon[data-tech="github"]:hover i { color: var(--primary-color); }
+.tech-icon[data-tech="docker"]:hover i { color: #2496ed; }
+.tech-icon[data-tech="flask"]:hover i { color: var(--secondary-color); }
+.tech-icon[data-tech="ai"]:hover i { color: var(--secondary-color); }
+
+@keyframes tech-ticker-scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 768px) {
+    .ticker-track {
+        animation-duration: 24s;
+    }
+
+    .tech-icon {
+        min-width: 110px;
+        padding: 1.1rem 1rem;
+        gap: 0.5rem;
+    }
+
+    .tech-icon i {
+        font-size: 2.1rem;
+    }
+
+    .tech-icon span {
+        font-size: 0.8rem;
+    }
+
+    .ticker-group {
+        gap: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ticker-track {
+        animation: none;
+        overflow-x: auto;
+        padding-bottom: 1rem;
+    }
 }
 
 /* ===================================
-   CERTIFICATES SECTION
+   CERTIFICATES & PROJECTS (Bauhaus Architectural Cards)
    =================================== */
 
-.certificates {
-    background: var(--bg-secondary);
+.certificates,
+.projects {
+    position: relative;
+    overflow: hidden;
+    padding: 2.5rem 0;
 }
 
-.certificates-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    margin-top: var(--spacing-lg);
+/* Bauhaus Geometric Triangle & Compass Motif in Section Margins */
+.projects::after {
+    content: '';
+    position: absolute;
+    left: -40px;
+    bottom: 40px;
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(45deg, rgba(208, 34, 32, 0.14) 0 50%, transparent 50% 100%);
+    border-left: 2px solid var(--secondary-color);
+    border-bottom: 2px solid var(--secondary-color);
+    pointer-events: none;
+    z-index: 0;
 }
 
-.certificate-card {
-    background: var(--bg-color);
-    padding: 2rem;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: var(--shadow-md);
-    transition: all var(--transition-speed);
-    border: 2px solid transparent;
+.certificates::after {
+    content: '';
+    position: absolute;
+    right: -40px;
+    top: 50px;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 1px solid var(--draft-line);
+    box-shadow: inset 35px 0 0 rgba(30, 115, 174, 0.12);
+    pointer-events: none;
+    z-index: 0;
 }
 
-.certificate-card:hover {
-    transform: translateY(-10px);
-    box-shadow: var(--shadow-xl);
-    border-color: var(--primary-color);
+.carousel-3d-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0.5rem auto 0;
+    padding: 0.5rem 0 1.5rem;
 }
 
-.certificate-icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 1.5rem;
+.carousel-3d-stage {
+    position: relative;
+    width: 100%;
+    height: 460px;
+    perspective: 1200px;
+    transform-style: preserve-3d;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    border-radius: 50%;
-    font-size: 2rem;
-    color: white;
+    overflow: visible;
+}
+
+#certificatesCarousel .carousel-3d-stage {
+    height: 380px;
+}
+
+.carousel-3d-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Sharp 90-Degree Bauhaus Architectural Card */
+.carousel-3d-card {
+    position: absolute;
+    width: 380px;
+    max-width: 88vw;
+    background: var(--bg-color);
+    border: 1.5px solid var(--ink-border);
+    border-top: 6px solid var(--primary-color);
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow: none;
+    will-change: transform, opacity;
+    transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1),
+        opacity 0.65s ease,
+        filter 0.65s ease,
+        border-color 0.3s ease;
+    cursor: pointer;
+    user-select: none;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.carousel-3d-card:nth-child(3n+1) {
+    border-top-color: var(--primary-color);
+}
+
+.carousel-3d-card:nth-child(3n+2) {
+    border-top-color: var(--secondary-color);
+}
+
+.carousel-3d-card:nth-child(3n+3) {
+    border-top-color: var(--accent-color);
+}
+
+/* Active Center Card with Flat Offset Bauhaus Shadow Block (Not Blurry Floating) */
+.carousel-3d-card.is-active {
+    z-index: 10 !important;
+    opacity: 1 !important;
+    filter: blur(0) !important;
+    border-color: var(--ink-heading);
+    box-shadow: 8px 8px 0 var(--ink-heading);
+    cursor: default;
+}
+
+.carousel-3d-card:not(.is-active) {
+    cursor: pointer;
+}
+
+.carousel-3d-card:not(.is-active):hover {
+    border-color: var(--primary-color);
+}
+
+/* Sharp Square Architectural Arrow Controls */
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 0;
+    background: var(--bg-color);
+    border: 1.5px solid var(--ink-border);
+    color: var(--ink-heading);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 25;
+    box-shadow: 4px 4px 0 var(--ink-heading);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.carousel-arrow:hover {
+    background: var(--primary-color);
+    color: #FEFDF9;
+    border-color: var(--ink-heading);
+}
+
+.carousel-prev {
+    left: -20px;
+}
+
+.carousel-next {
+    right: -20px;
+}
+
+/* Geometric Bar Indicators */
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.55rem;
+    margin-top: 1.75rem;
+    position: relative;
+    z-index: 10;
+}
+
+.carousel-dot {
+    width: 12px;
+    height: 6px;
+    border-radius: 0;
+    background: var(--draft-line);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: 1px solid var(--ink-border);
+    padding: 0;
+}
+
+.carousel-dot.is-active {
+    width: 34px;
+    background: var(--secondary-color);
+    border-color: var(--ink-heading);
+}
+
+/* Certificate Card Styles */
+.certificate-card {
+    padding: 2.15rem 2rem;
+    text-align: center;
+}
+
+.certificate-icon {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 1.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--terminal-bg);
+    border: 1.5px solid var(--ink-border);
+    border-bottom: 4px solid var(--accent-color);
+    border-radius: 0;
+    font-size: 1.75rem;
+    color: var(--accent-color);
 }
 
 .certificate-card h3 {
-    font-size: 1.3rem;
+    font-size: 1.45rem;
+    font-weight: 400;
+    line-height: 1.3;
     margin-bottom: 0.5rem;
+    color: var(--ink-heading);
 }
 
 .issuer {
-    color: var(--text-light);
+    color: var(--primary-color);
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    font-size: 0.92rem;
+    margin-bottom: 0.35rem;
 }
 
 .date {
+    font-family: var(--font-mono);
     color: var(--text-light);
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
+    font-size: 0.8rem;
+    margin-bottom: 1.45rem;
 }
 
 .btn-verify {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    background: var(--primary-color);
-    color: white;
-    border-radius: 25px;
+    padding: 0.65rem 1.4rem;
+    background: var(--ink-heading);
+    color: var(--bg-color);
+    border: 1.5px solid var(--ink-heading);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 0;
+    font-size: 0.86rem;
     font-weight: 600;
-    transition: all var(--transition-speed);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
 }
 
 .btn-verify:hover {
-    background: var(--secondary-color);
-    transform: scale(1.05);
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    border-left-color: var(--secondary-color);
+    color: #FEFDF9;
 }
 
-/* ===================================
-   PROJECTS SECTION
-   =================================== */
-.projects {
-    background: var(--bg-secondary);
-}
-
-.projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
-    margin-top: var(--spacing-lg);
-}
-
+/* Project Card Specifics */
 .project-card {
-    background: var(--bg-color);
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
-    transition: all var(--transition-speed);
+    display: flex;
+    flex-direction: column;
 }
 
-.project-card:hover {
-    transform: translateY(-10px);
-    box-shadow: var(--shadow-xl);
+@media (max-width: 900px) {
+    .carousel-prev {
+        left: 5px;
+    }
+
+    .carousel-next {
+        right: 5px;
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-3d-stage {
+        height: 510px;
+    }
+
+    #certificatesCarousel .carousel-3d-stage {
+        height: 395px;
+    }
+
+    .carousel-3d-card {
+        width: 310px;
+    }
+
+    .carousel-arrow {
+        width: 42px;
+        height: 42px;
+        font-size: 1rem;
+    }
+
+    .carousel-prev {
+        left: 2px;
+    }
+
+    .carousel-next {
+        right: 2px;
+    }
 }
 
 .project-image {
     position: relative;
-    height: 250px;
+    height: 195px;
     overflow: hidden;
+    border-bottom: 1.5px solid var(--ink-border);
 }
 
 .project-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform var(--transition-speed);
-}
-
-.project-card:hover .project-image img {
-    transform: scale(1.1);
 }
 
 .project-overlay {
@@ -726,9 +1314,9 @@ body.dark-mode .navbar {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(99, 102, 241, 0.95);
+    background: rgba(20, 24, 31, 0.88);
     display: flex;
-    gap: 1rem;
+    gap: 0.8rem;
     align-items: center;
     justify-content: center;
     opacity: 0;
@@ -741,49 +1329,77 @@ body.dark-mode .navbar {
 
 .btn-view,
 .btn-code {
-    padding: 0.75rem 1.5rem;
-    background: white;
-    color: var(--primary-color);
-    border-radius: 25px;
+    padding: 0.65rem 1.2rem;
+    background: #FEFDF9;
+    color: #101011;
+    border: 1.5px solid #101011;
+    border-left: 4px solid var(--secondary-color);
+    border-radius: 0;
+    font-size: 0.84rem;
     font-weight: 600;
-    transition: all var(--transition-speed);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+.btn-code {
+    border-left-color: var(--primary-color);
 }
 
 .btn-view:hover,
 .btn-code:hover {
-    background: var(--secondary-color);
-    color: white;
-    transform: scale(1.05);
+    background: var(--accent-color);
+    color: #101011;
 }
 
 .project-info {
-    padding: 1.5rem;
+    padding: 1.25rem;
 }
 
 .project-info h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+    color: var(--ink-heading);
 }
 
 .project-info p {
     color: var(--text-light);
-    margin-bottom: 1rem;
-    line-height: 1.6;
+    margin-bottom: 0.85rem;
+    line-height: 1.55;
+    font-size: 0.9rem;
 }
 
 .tech-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.4rem;
 }
 
+/* Dark Code Terminal Tags modeled directly after "const skills = [...]" box in home_pic.jpeg */
 .tech-tag {
-    padding: 0.4rem 1rem;
-    background: var(--bg-secondary);
-    color: var(--primary-color);
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-family: var(--font-mono);
+    padding: 0.28rem 0.68rem;
+    background: var(--terminal-bg);
+    color: #FEFDF9;
+    border-left: 3px solid var(--accent-color);
+    border-radius: 0;
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.tech-tag:nth-child(3n+1) {
+    border-left-color: var(--primary-color);
+}
+
+.tech-tag:nth-child(3n+2) {
+    border-left-color: var(--secondary-color);
+}
+
+.tech-tag:nth-child(3n+3) {
+    border-left-color: var(--accent-color);
 }
 
 /* ===================================
@@ -796,7 +1412,7 @@ body.dark-mode .navbar {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(16, 16, 17, 0.82);
     z-index: 2000;
     overflow-y: auto;
 }
@@ -809,30 +1425,19 @@ body.dark-mode .navbar {
 
 .modal-content {
     background: var(--bg-color);
+    border: 2px solid var(--ink-border);
+    border-top: 6px solid var(--primary-color);
     max-width: 800px;
     width: 90%;
-    border-radius: 20px;
+    border-radius: 0;
     position: relative;
-    animation: modalSlideIn 0.4s ease;
     max-height: 90vh;
     overflow-y: auto;
 }
 
-@keyframes modalSlideIn {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
 .close-modal {
     position: absolute;
-    top: 20px;
+    top: 16px;
     right: 20px;
     font-size: 2rem;
     cursor: pointer;
@@ -841,53 +1446,58 @@ body.dark-mode .navbar {
 }
 
 .close-modal:hover {
-    color: var(--error-color);
+    color: var(--secondary-color);
 }
 
 .modal-body {
-    padding: 3rem;
+    padding: 2.75rem;
 }
 
 .modal-image {
     width: 100%;
     height: 300px;
     object-fit: cover;
-    border-radius: 15px;
-    margin-bottom: 2rem;
+    border-radius: 0;
+    border: 1.5px solid var(--ink-border);
+    margin-bottom: 1.75rem;
 }
 
 .modal-title {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+    font-size: 2.2rem;
+    font-weight: 400;
+    margin-bottom: 0.85rem;
+    color: var(--ink-heading);
 }
 
 .modal-description {
     color: var(--text-light);
     line-height: 1.8;
-    margin-bottom: 2rem;
+    margin-bottom: 1.75rem;
 }
 
 .modal-features h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+    font-size: 1.55rem;
+    font-weight: 400;
+    margin-bottom: 0.85rem;
+    color: var(--ink-heading);
 }
 
 .features-list {
-    list-style: disc;
-    padding-left: 2rem;
-    margin-bottom: 2rem;
+    list-style: square;
+    padding-left: 1.5rem;
+    margin-bottom: 1.75rem;
 }
 
 .features-list li {
     color: var(--text-light);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.45rem;
 }
 
 .modal-tech {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.85rem;
 }
 
 .modal-links {
@@ -896,115 +1506,175 @@ body.dark-mode .navbar {
 }
 
 /* ===================================
-   CONTACT SECTION
+   CONTACT SECTION (Architectural Blueprint Sheet)
    =================================== */
 
 .contact {
-    background: var(--bg-secondary);
+    padding: 2.5rem 0;
 }
 
 .contact-content {
     display: grid;
-    grid-template-columns: 1fr 1.5fr;
-    gap: 4rem;
-    margin-top: var(--spacing-lg);
+    grid-template-columns: 1fr 1.4fr;
+    gap: 2.5rem;
+    margin-top: 0.5rem;
+    align-items: start;
 }
 
 .contact-info {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1rem;
 }
 
+/* Flat Architectural Ledger Blocks (Zero Floating) */
 .contact-item {
     display: flex;
-    gap: 1.5rem;
-    align-items: flex-start;
+    gap: 1.1rem;
+    align-items: center;
+    padding: 1rem 1.2rem;
+    background: var(--bg-color);
+    border: 1px solid var(--ink-border);
+    border-left: 5px solid var(--primary-color);
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.contact-item:nth-child(2) {
+    border-left-color: var(--accent-color);
+}
+
+.contact-item:nth-child(3) {
+    border-left-color: var(--secondary-color);
 }
 
 .contact-icon {
-    width: 60px;
-    height: 60px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--primary-color);
-    color: white;
-    border-radius: 15px;
-    font-size: 1.5rem;
+    background: var(--terminal-bg);
+    color: #FEFDF9;
+    border-radius: 0;
+    font-size: 1.05rem;
     flex-shrink: 0;
 }
 
 .contact-item h3 {
     font-size: 1.2rem;
-    margin-bottom: 0.5rem;
+    font-weight: 400;
+    margin-bottom: 0.15rem;
+    color: var(--ink-heading);
 }
 
 .contact-item p {
+    font-family: var(--font-mono);
     color: var(--text-light);
+    font-size: 0.85rem;
 }
 
+/* Flat Blueprint Drafting Form with Overhanging Corner Crosshair Lines */
 .contact-form {
+    position: relative;
     background: var(--bg-color);
-    padding: 2.5rem;
-    border-radius: 20px;
-    box-shadow: var(--shadow-lg);
+    padding: 1.75rem 2rem;
+    border: 1.5px solid var(--ink-border);
+    border-top: 5px solid var(--ink-heading);
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.contact-form::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-left: 1px solid var(--draft-line);
+    border-right: 1px solid var(--draft-line);
+    pointer-events: none;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 10px;
+    padding: 0.72rem 0.9rem;
+    border: 1px solid var(--ink-border);
+    border-radius: 0;
     font-family: inherit;
-    font-size: 1rem;
-    background: var(--bg-color);
+    font-size: 0.92rem;
+    background: var(--bg-secondary);
     color: var(--text-color);
-    transition: border-color var(--transition-speed);
+    transition: border-color var(--transition-speed), background-color var(--transition-speed);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
     border-color: var(--primary-color);
+    border-left: 4px solid var(--primary-color);
+    background: var(--bg-color);
 }
 
 .form-group textarea {
     resize: vertical;
-    min-height: 120px;
+    min-height: 64px;
+    height: 68px;
 }
 
-.contact-form .btn {
-    width: 100%;
+.form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.4rem;
+}
+
+.form-footer .recaptcha-wrapper {
+    margin-bottom: 0;
+}
+
+.form-footer .btn-submit {
+    flex: 1;
+    min-width: 165px;
+    height: 48px;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    gap: 0.5rem;
 }
 
 .form-message {
     margin-top: 1rem;
-    padding: 1rem;
-    border-radius: 10px;
+    padding: 0.9rem;
+    border-radius: 0;
+    border: 1.5px solid var(--ink-border);
     text-align: center;
     display: none;
 }
 
 .form-message.success {
     background: var(--success-color);
-    color: white;
+    color: #ffffff;
     display: block;
 }
 
 .form-message.error {
     background: var(--error-color);
-    color: white;
+    color: #ffffff;
     display: block;
 }
 
-/* reCAPTCHA Widget */
 .recaptcha-wrapper {
     display: flex;
     justify-content: flex-start;
@@ -1018,12 +1688,21 @@ body.dark-mode .navbar {
 }
 
 /* ===================================
-   FOOTER
+   FOOTER (Dark Terminal Block matching "git commit -m" box in home_pic.jpeg)
    =================================== */
 
 .footer {
-    background: var(--bg-secondary);
-    padding: 3rem 0 1rem;
+    position: relative;
+    background: #12161D;
+    color: #FEFDF9;
+    padding: 3.25rem 0 1.25rem;
+    border-top: 6px solid transparent;
+    border-image: linear-gradient(
+        90deg,
+        var(--primary-color) 0% 33.33%,
+        var(--accent-color) 33.33% 66.66%,
+        var(--secondary-color) 66.66% 100%
+    ) 1;
 }
 
 .footer-content {
@@ -1034,19 +1713,29 @@ body.dark-mode .navbar {
 }
 
 .footer-section h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+    font-size: 1.85rem;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.85rem;
+    color: #FEFDF9;
 }
 
 .footer-section h4 {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
+    font-size: 1.35rem;
+    font-weight: 400;
+    margin-bottom: 0.85rem;
+    color: var(--accent-color);
 }
 
 .footer-section p {
-    color: var(--text-light);
+    color: #B4BECC;
     line-height: 1.8;
-    margin-bottom: 1rem;
+    margin-bottom: 1.15rem;
+}
+
+.footer .social-links a {
+    border-color: rgba(254, 253, 249, 0.28);
+    color: #FEFDF9;
 }
 
 .footer-section ul li {
@@ -1054,83 +1743,90 @@ body.dark-mode .navbar {
 }
 
 .footer-section ul li a {
-    color: var(--text-light);
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
+    color: #B4BECC;
     transition: color var(--transition-speed);
 }
 
 .footer-section ul li a:hover {
-    color: var(--primary-color);
+    color: var(--accent-color);
 }
 
 .footer-bottom {
     text-align: center;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border-color);
-    color: var(--text-light);
+    padding-top: 1.75rem;
+    border-top: 1px solid rgba(254, 253, 249, 0.14);
+    color: #9AA5B5;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
 }
 
 /* ===================================
-   QUICK CONTACT BUTTONS
+   QUICK CONTACT BUTTONS (Flat Sharp Bauhaus Squares)
    =================================== */
 
 .quick-contact {
     position: fixed;
-    right: 30px;
-    bottom: 30px;
+    right: 28px;
+    bottom: 28px;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.65rem;
     z-index: 999;
 }
 
 .contact-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-size: 1.5rem;
-    box-shadow: var(--shadow-lg);
-    transition: all var(--transition-speed);
-}
-
-.contact-btn:hover {
-    transform: scale(1.1);
+    color: #FEFDF9;
+    font-size: 1.2rem;
+    border: 1.5px solid #101011;
+    box-shadow: none;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
 .email-btn {
-    background: #ea4335;
+    background: var(--secondary-color);
 }
 
 .whatsapp-btn {
-    background: #25d366;
+    background: #1E9E54;
 }
 
 .message-btn {
-    background: #0084ff;
+    background: var(--primary-color);
+}
+
+.contact-btn:hover {
+    background: var(--accent-color);
+    color: #101011;
 }
 
 /* ===================================
-   BACK TO TOP BUTTON
+   BACK TO TOP BUTTON (Sharp Architectural Square)
    =================================== */
 
 .back-to-top {
     position: fixed;
-    bottom: 30px;
-    left: 30px;
-    width: 50px;
-    height: 50px;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    font-size: 1.2rem;
+    bottom: 28px;
+    left: 28px;
+    width: 46px;
+    height: 46px;
+    background: var(--ink-heading);
+    color: var(--bg-color);
+    border: 1.5px solid var(--ink-border);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 0;
+    font-size: 1.05rem;
     cursor: pointer;
     opacity: 0;
     pointer-events: none;
-    transition: all var(--transition-speed);
+    transition: opacity var(--transition-speed), background-color var(--transition-speed);
     z-index: 999;
 }
 
@@ -1140,23 +1836,21 @@ body.dark-mode .navbar {
 }
 
 .back-to-top:hover {
-    background: var(--secondary-color);
-    transform: translateY(-5px);
+    background: var(--primary-color);
+    color: #FEFDF9;
 }
 
 /* ===================================
-   FADE IN ANIMATIONS
+   FADE IN ANIMATIONS (Grounded — No Floating Vertical Drift)
    =================================== */
 
 .fade-in {
     opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.6s ease;
+    transition: opacity 0.55s ease;
 }
 
 .fade-in.visible {
     opacity: 1;
-    transform: translateY(0);
 }
 
 /* Loading Skeleton */
@@ -1182,15 +1876,14 @@ body.dark-mode .navbar {
 .skeleton-text {
     height: 1rem;
     margin-bottom: 0.5rem;
-    border-radius: 4px;
+    border-radius: 0;
 }
 
 .skeleton-image {
     width: 100%;
     height: 200px;
-    border-radius: 10px;
+    border-radius: 0;
 }
-
 
 /* ===================================
    RESPONSIVE DESIGN
@@ -1199,14 +1892,14 @@ body.dark-mode .navbar {
 @media (max-width: 968px) {
     .nav-menu {
         position: fixed;
-        top: 70px;
+        top: 63px;
         right: -100%;
-        width: 70%;
-        height: calc(100vh - 70px);
+        width: 74%;
+        height: calc(100vh - 63px);
         background: var(--bg-color);
+        border-left: 1.5px solid var(--ink-border);
         flex-direction: column;
         padding: 2rem;
-        box-shadow: var(--shadow-lg);
         transition: right var(--transition-speed);
     }
 
@@ -1218,13 +1911,37 @@ body.dark-mode .navbar {
         display: flex;
     }
 
+    /* Keep top area behind home_pic.jpeg 100% pure #FEFDF9 on stacked mobile layout */
+    #particles-js {
+        -webkit-mask-image: linear-gradient(180deg, transparent 0%, transparent 56%, rgba(0, 0, 0, 0.45) 78%, rgba(0, 0, 0, 0.7) 100%);
+        mask-image: linear-gradient(180deg, transparent 0%, transparent 56%, rgba(0, 0, 0, 0.45) 78%, rgba(0, 0, 0, 0.7) 100%);
+    }
+
+    .hero {
+        padding-top: 90px;
+        padding-bottom: 4.5rem;
+    }
+
     .hero .container {
         grid-template-columns: 1fr;
         text-align: center;
+        gap: 2rem;
+    }
+
+    .hero-content::before {
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .hero-content h1 {
-        font-size: 2.5rem;
+        font-size: 2.9rem;
+    }
+
+    .hero-description {
+        margin-left: auto;
+        margin-right: auto;
+        border-left: none;
+        padding-left: 0;
     }
 
     .hero-buttons {
@@ -1239,51 +1956,38 @@ body.dark-mode .navbar {
         order: -1;
     }
 
-    .image-wrapper {
-        width: 300px;
-        height: 300px;
+    .image-wrapper img {
+        max-width: min(330px, 86vw);
+        max-height: 495px;
     }
 
     .about-content {
         grid-template-columns: 1fr;
         text-align: center;
+        gap: 2.5rem;
     }
 
-    .about-stats {
-        grid-template-columns: 1fr;
+    .about-image {
+        width: min(310px, 84vw);
     }
 
-    .projects-grid {
-        grid-template-columns: 1fr;
+    .about-text h3::after {
+        left: 50%;
+        transform: translateX(-44px);
+    }
+
+    .about-btn {
+        justify-content: center;
     }
 
     .contact-content {
         grid-template-columns: 1fr;
-        gap: 2.5rem;
-    }
-
-    .contact-info {
-        gap: 1.5rem;
-    }
-
-    .contact-item {
-        gap: 1rem;
-    }
-
-    .contact-icon {
-        width: 50px;
-        height: 50px;
-        font-size: 1.2rem;
-        border-radius: 12px;
+        gap: 2.25rem;
     }
 
     .footer-content {
         grid-template-columns: 1fr;
         text-align: center;
-    }
-
-    .tech-icons {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     }
 }
 
@@ -1293,15 +1997,15 @@ body.dark-mode .navbar {
     }
 
     .section-title {
-        font-size: 2rem;
+        font-size: 2.25rem;
     }
 
     .hero-content h1 {
-        font-size: 2rem;
+        font-size: 2.45rem;
     }
 
     .hero-content h2 {
-        font-size: 1.5rem;
+        font-size: 1.05rem;
     }
 
     .hero-buttons {
@@ -1313,12 +2017,16 @@ body.dark-mode .navbar {
         justify-content: center;
     }
 
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
     .contact-form {
-        padding: 1.5rem;
+        padding: 1.4rem;
     }
 
     .contact-item h3 {
-        font-size: 1rem;
+        font-size: 1.15rem;
     }
 
     .about-btn {
@@ -1338,26 +2046,25 @@ body.dark-mode .navbar {
     }
 
     .hero-content h1 {
-        font-size: 1.8rem;
+        font-size: 2.15rem;
     }
 
     .contact-content {
-        gap: 2rem;
+        gap: 1.75rem;
     }
 
     .contact-form {
-        padding: 1.2rem;
-        border-radius: 15px;
+        padding: 1.15rem;
     }
 
     .form-group input,
     .form-group textarea {
-        padding: 0.85rem;
+        padding: 0.8rem;
         font-size: 0.95rem;
     }
 
     .contact-info {
-        gap: 1.2rem;
+        gap: 0.9rem;
     }
 
     .contact-item {
@@ -1367,27 +2074,24 @@ body.dark-mode .navbar {
     }
 
     .contact-icon {
-        width: 44px;
-        height: 44px;
+        width: 42px;
+        height: 42px;
         font-size: 1rem;
-        border-radius: 10px;
-        flex-shrink: 0;
     }
 
     .contact-item h3 {
-        font-size: 0.95rem;
-        margin-bottom: 0.25rem;
+        font-size: 1rem;
     }
 
     .contact-item p {
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         word-break: break-all;
     }
 
     .contact-btn {
-        width: 50px;
-        height: 50px;
-        font-size: 1.2rem;
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
     }
 
     .modal-body {
@@ -1401,24 +2105,26 @@ body.dark-mode .navbar {
     .quick-contact {
         right: 12px;
         bottom: 12px;
-        gap: 0.6rem;
+        gap: 0.5rem;
     }
 
     .back-to-top {
         left: 12px;
         bottom: 12px;
+        width: 42px;
+        height: 42px;
     }
 
     .dark-mode-toggle {
         right: 12px;
-        top: 75px;
-        width: 42px;
-        height: 42px;
+        top: 74px;
+        width: 40px;
+        height: 40px;
     }
 }
 
 /* ===================================
-   SMOOTH SCROLLING
+   SMOOTH SCROLLING & REDUCED MOTION
    =================================== */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1438,7 +2144,6 @@ body.dark-mode .navbar {
    =================================== */
 
 @media print {
-
     .navbar,
     .dark-mode-toggle,
     .quick-contact,
@@ -1452,8 +2157,9 @@ body.dark-mode .navbar {
         color: black;
     }
 }
+
 /* ===================================
-   SCROLL PROGRESS BAR
+   SCROLL PROGRESS BAR (Bauhaus Tricolor)
    =================================== */
 .scroll-progress-container {
     position: fixed;
@@ -1468,7 +2174,7 @@ body.dark-mode .navbar {
 .scroll-progress-bar {
     height: 100%;
     width: 0;
-    background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 50%, var(--secondary-color) 100%);
     transition: width 0.1s ease-out;
 }
 
@@ -1486,7 +2192,8 @@ body.dark-mode .navbar {
 .resume-iframe-container {
     flex-grow: 1;
     overflow: hidden;
-    border-radius: 10px;
+    border-radius: 0;
+    border: 1.5px solid var(--ink-border);
     background: #f1f1f1;
     position: relative;
     min-height: 500px;
@@ -1503,7 +2210,7 @@ body.dark-mode .navbar {
 
 .close-modal-resume {
     position: absolute;
-    top: 20px;
+    top: 16px;
     right: 20px;
     font-size: 2rem;
     cursor: pointer;
