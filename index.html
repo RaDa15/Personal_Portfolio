@@ -37,7 +37,7 @@
         rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css?v=4.1">
+    <link rel="stylesheet" href="styles.css?v=4.2">
     <!-- Particles.js with SRI -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"
         integrity="sha384-d+UOwmNNIC7V4izkTAKSXzWhjC2GxiS9PTykO1XdOPC3nc2z65UOS7SP6QdKPA70"
@@ -515,15 +515,30 @@
     <!-- Resume Modal -->
     <div class="modal" id="resumeModal">
         <div class="modal-content resume-modal-content">
-            <span class="close-modal-resume">&times;</span>
-            <div class="modal-body">
+            <span class="close-modal-resume" role="button" tabindex="0" aria-label="Close resume modal">&times;</span>
+            <div class="modal-body resume-modal-body">
                 <h2 class="modal-title">Interactive Resume</h2>
-                <div class="resume-iframe-container">
-                    <iframe src="Resume/Pema_Choda_Resume.pdf" title="Pema Choda Resume" loading="lazy"></iframe>
+                <div class="resume-iframe-container" id="resumeViewerContainer">
+                    <iframe data-src="Resume/Pema_Choda_Resume.pdf" title="Pema Choda Resume"
+                        class="resume-pdf-iframe"></iframe>
+                    <div class="resume-mobile-pages" aria-label="Pema Choda Resume Pages">
+                        <div class="resume-page-sheet">
+                            <span class="resume-page-badge">Page 1 / 2</span>
+                            <img data-src="Resume/cv_page_1.webp" alt="Pema Choda Resume - Page 1">
+                        </div>
+                        <div class="resume-page-sheet">
+                            <span class="resume-page-badge">Page 2 / 2</span>
+                            <img data-src="Resume/cv_page_2.webp" alt="Pema Choda Resume - Page 2">
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-links resume-download-links">
+                    <a href="Resume/Pema_Choda_Resume.pdf" target="_blank" rel="noopener noreferrer"
+                        class="btn btn-secondary">
+                        <i class="fas fa-external-link-alt"></i> Open Full PDF
+                    </a>
                     <a href="Resume/Pema_Choda_Resume.pdf" download class="btn btn-primary">
-                        <i class="fas fa-download"></i> Download PDF Version
+                        <i class="fas fa-download"></i> Download PDF
                     </a>
                 </div>
             </div>
@@ -672,7 +687,7 @@
     </button>
 
     <!-- Custom JavaScript -->
-    <script src="script.js?v=4.1"></script>
+    <script src="script.js?v=4.2"></script>
 </body>
 
 </html>

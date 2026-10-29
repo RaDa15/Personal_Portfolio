@@ -327,8 +327,10 @@ const viewButtons = document.querySelectorAll('.btn-view');
 function sanitizeHttpUrl(rawUrl) {
     if (typeof rawUrl !== 'string' || !rawUrl.trim()) return '#';
     try {
-        const parsed = new URL(rawUrl, window.location.origin);
-        if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+        const parsed = new URL(rawUrl, window.location.href);
+        const isHttp = parsed.protocol === 'https:' || parsed.protocol === 'http:';
+        const isLocalFile = parsed.protocol === 'file:' && window.location.protocol === 'file:';
+        if (isHttp || isLocalFile) {
             return parsed.href;
         }
     } catch {
@@ -407,27 +409,68 @@ if (modal) {
 }
 
 // ===================================
-// RESUME MODAL
+// RESUME MODAL (DESKTOP PDF IFRAME + MOBILE HIGH-DPI PAGE VIEWER)
 // ===================================
 
 const resumeModal = document.getElementById('resumeModal');
 const openResumeBtn = document.getElementById('openResume');
 const closeResumeBtn = document.querySelector('.close-modal-resume');
+const resumeViewerContainer = document.getElementById('resumeViewerContainer');
 
-if (openResumeBtn) {
+function shouldUseMobileResumeViewer() {
+    const ua = navigator.userAgent || '';
+    const isMobileOS =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) ||
+        (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+    const isNarrowViewport = window.matchMedia('(max-width: 968px)').matches;
+    const lacksInlinePdfSupport =
+        typeof navigator.pdfViewerEnabled === 'boolean' && !navigator.pdfViewerEnabled;
+
+    return isMobileOS || isNarrowViewport || lacksInlinePdfSupport;
+}
+
+function syncResumeViewerMode() {
+    if (!resumeViewerContainer) return;
+
+    const useMobilePages = shouldUseMobileResumeViewer();
+    resumeViewerContainer.classList.toggle('is-mobile-viewer', useMobilePages);
+
+    if (useMobilePages) {
+        resumeViewerContainer.querySelectorAll('.resume-page-sheet img[data-src]').forEach(img => {
+            if (!img.getAttribute('src')) {
+                img.src = sanitizeHttpUrl(img.getAttribute('data-src'));
+            }
+        });
+    } else {
+        const pdfIframe = resumeViewerContainer.querySelector('.resume-pdf-iframe[data-src]');
+        if (pdfIframe && !pdfIframe.getAttribute('src')) {
+            pdfIframe.src = sanitizeHttpUrl(pdfIframe.getAttribute('data-src'));
+        }
+    }
+}
+
+if (openResumeBtn && resumeModal) {
     openResumeBtn.addEventListener('click', () => {
+        syncResumeViewerMode();
         resumeModal.classList.add('active');
         document.body.style.overflow = 'hidden';
     });
 }
 
 const closeResumeModal = () => {
+    if (!resumeModal) return;
     resumeModal.classList.remove('active');
     document.body.style.overflow = 'auto';
 };
 
 if (closeResumeBtn) {
     closeResumeBtn.addEventListener('click', closeResumeModal);
+    closeResumeBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            closeResumeModal();
+        }
+    });
 }
 
 if (resumeModal) {
@@ -435,6 +478,12 @@ if (resumeModal) {
         if (e.target === resumeModal) closeResumeModal();
     });
 }
+
+window.addEventListener('resize', () => {
+    if (resumeModal && resumeModal.classList.contains('active')) {
+        syncResumeViewerMode();
+    }
+});
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
