@@ -4,8 +4,8 @@
   "description": "Personal portfolio showcasing web development and AI projects",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#FEFDF9",
-  "theme_color": "#1E73AE",
+  "background_color": "#F4F1EA",
+  "theme_color": "#012B1D",
   "icons": [
     {
       "src": "icon-192x192.png",
